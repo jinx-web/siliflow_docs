@@ -1,0 +1,58 @@
+# Welcome to SiliFlow Studio
+
+**SiliFlow Studio** is a unified, next-generation electronic design automation (EDA) workbench engineered specifically for modern silicon designers, verification engineers, and hardware students.
+
+Traditional EDA software forces hardware engineers into fragmented, 1990s-era tooling: multi-gigabyte heavy installers, brittle external FlexLM license daemons, disjointed text editors, and external waveform viewing utilities like GTKWave that break flow every time you need to trace an assertion failure.
+
+SiliFlow unifies the entire RTL lifecycle into an ultra-fast, single executable.
+
+---
+
+## Key Highlights
+
+- **⚡ Sub-Millisecond Iterations**: Hit `F5` to trigger real-time compilation, testbench execution, and waveform rendering in under **40 milliseconds**.
+- **📦 Single 45MB Binary**: Zero external daemon services, zero Java runtimes, zero complex license servers. Download, unpack, and launch.
+- **📈 Integrated Waveform Canvas**: High-DPI hardware-accelerated waveform viewer built directly beneath the code editor. No alt-tabbing or external trace files needed.
+- **🔍 Bi-Directional Cross-Probing**: Click any signal transition or assertion glitch in the waveform to jump directly to the exact driving line of Verilog/SystemVerilog RTL.
+- **🔌 Multi-Engine Simulation Pipeline**: Out-of-the-box support for Icarus Verilog (`iverilog`), Verilator cycle-accurate C++ simulation, and native SiliFlow engine.
+
+---
+
+## Architecture Overview
+
+SiliFlow separates concerns into an ergonomic frontend canvas and an isolated, high-performance simulation worker layer:
+
+```
+┌────────────────────────────────────────────────────────┐
+│                  SILIFLOW STUDIO IDE                   │
+├────────────────────────────┬───────────────────────────┤
+│  Monaco RTL Code Editor    │  Embedded Waveform Canvas │
+│  - SystemVerilog 2017 LSP  │  - Multi-gigabyte VCD/FST │
+│  - Instant Linting & AST   │  - Cross-probe to source  │
+└─────────────┬──────────────┴─────────────▲─────────────┘
+              │                            │
+              ▼ (IPC / Direct Memory)      │ (Mapped Trace Buffers)
+┌──────────────────────────────────────────┴─────────────┐
+│             UNIFIED SIMULATION ORCHESTRATOR            │
+│  - Icarus Verilog (Event-Driven Behavioral)            │
+│  - Verilator (Cycle-Accurate High-Throughput C++)      │
+│  - SiliFlow Native Micro-Engine                        │
+└────────────────────────────────────────────────────────┘
+```
+
+---
+
+## System Requirements
+
+| Operating System | Architecture | Minimum RAM | Storage |
+| :--- | :--- | :--- | :--- |
+| **Windows** (10 / 11) | x86_64, ARM64 | 4 GB | 150 MB |
+| **macOS** (12 Monterey+) | Apple Silicon (M1/M2/M3/M4), x86_64 | 4 GB | 120 MB |
+| **Linux** (Ubuntu 20.04+, Fedora 38+, Arch) | x86_64, aarch64 | 4 GB | 140 MB |
+
+---
+
+## Ready to Start?
+
+Head over to the [Getting Started & Simulation](/getting-started) guide to set up your first workspace and run an F5 simulation in under 60 seconds.
+
