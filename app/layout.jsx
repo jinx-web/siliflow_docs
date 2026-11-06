@@ -8,14 +8,28 @@ export const metadata = {
     template: '%s - SiliFlow Studio Docs',
     default: 'SiliFlow Studio Documentation'
   },
-  description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.'
+  description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.',
+  icons: {
+    icon: [
+      { url: '/docs/favicon.ico', sizes: 'any' },
+      { url: '/docs/icon.png', type: 'image/png' },
+    ],
+    apple: '/docs/apple-icon.png',
+  }
 }
 
 const navbar = (
   <Navbar
     logo={
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontWeight: 800, letterSpacing: '-0.02em', fontSize: '1.05rem' }}>
-        <span style={{ color: '#00E5FF' }}>⚡</span> SILIFLOW STUDIO DOCS
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', fontWeight: 800, letterSpacing: '-0.02em', fontSize: '1.05rem' }}>
+        <img
+          src="/docs/logo.png"
+          alt="SiliFlow logo"
+          width={24}
+          height={24}
+          style={{ borderRadius: '5px', objectFit: 'contain' }}
+        />
+        <span>SILIFLOW <span style={{ opacity: 0.65, fontWeight: 500, fontSize: '0.95rem' }}>DOCS</span></span>
       </span>
     }
     projectLink="https://github.com/siliflow/siliflow"
@@ -39,7 +53,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/docs/favicon.ico" sizes="any" />
+        <link rel="icon" href="/docs/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/docs/apple-icon.png" />
       </Head>
       <body>
         <Layout
@@ -56,4 +72,3 @@ export default async function RootLayout({ children }) {
     </html>
   )
 }
-
