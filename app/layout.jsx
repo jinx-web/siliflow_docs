@@ -32,7 +32,7 @@ const navbar = (
         <span>SILIFLOW <span style={{ opacity: 0.65, fontWeight: 500, fontSize: '0.95rem' }}>DOCS</span></span>
       </span>
     }
-    projectLink="https://github.com/siliflow/siliflow"
+    projectLink="https://github.com/jinx-web/siliflow_docs"
   />
 )
 
@@ -61,7 +61,7 @@ export default async function RootLayout({ children }) {
         <Layout
           navbar={navbar}
           pageMap={pageMap}
-          docsRepositoryBase="https://github.com/siliflow/siliflow/tree/main/docs"
+          docsRepositoryBase="https://github.com/jinx-web/siliflow_docs/tree/main"
           footer={footer}
           editLink="Edit this page on GitHub"
           sidebar={{ defaultMenuCollapseLevel: 2 }}

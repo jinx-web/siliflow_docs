@@ -7,4 +7,14 @@ const withNextra = nextra({
 export default withNextra({
   reactStrictMode: true,
   basePath: '/docs',
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/docs',
+        basePath: false,
+        permanent: false,
+      },
+    ]
+  },
 })
