@@ -1,0 +1,102 @@
+# Installation & Toolchains
+
+Siliflow is distributed as a lightweight, native cross-platform application. Thanks to its native Rust and OS webview architecture, the entire installer is **under 10 MB** (vs 150+ MB for Electron apps) and installs in seconds.
+
+---
+
+## 1. Downloading Siliflow
+
+Official releases are published directly on our public releases portal:
+👉 **[https://github.com/jinx-web/siliflow-releases/releases/latest](https://github.com/jinx-web/siliflow-releases/releases/latest)**
+
+### Operating System Packages
+
+| Operating System | Architecture | Package Format | Download File | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **Windows** | x64 (64-bit) | `.exe` / `.msi` | `Siliflow_1.1.0_x64-setup.exe`<br/>`Siliflow_1.1.0_x64_en-US.msi` | Windows 10 & 11 compatible |
+| **macOS** | Apple Silicon (M1/M2/M3/M4) | `.dmg` | `Siliflow_1.1.0_aarch64.dmg` | macOS 12 Monterey or newer |
+| **Linux** | x86_64 (64-bit) | `.AppImage` / `.deb` | `Siliflow_1.1.0_amd64.AppImage`<br/>`Siliflow_1.1.0_amd64.deb` | Ubuntu, Debian, Fedora, Arch |
+
+---
+
+## 2. Installation Steps
+
+### Windows Installation
+1. Download `Siliflow_1.1.0_x64-setup.exe` or `Siliflow_1.1.0_x64_en-US.msi`.
+2. Double-click to launch the installer.
+3. Follow the wizard. Siliflow will create a Desktop shortcut and Start Menu entry.
+4. Launch **Siliflow**.
+
+### macOS Installation
+1. Download `Siliflow_1.1.0_aarch64.dmg`.
+2. Double-click the `.dmg` file to mount it.
+3. Drag the **Siliflow** icon into your **Applications** folder.
+4. Launch Siliflow from Spotlight or Launchpad. *(On first launch, if macOS Gatekeeper prompts an unverified developer dialog, right-click `Siliflow.app` in Finder and select **Open**).*
+
+### Linux Installation
+
+#### Option A: Universal AppImage (Runs on all distributions)
+```bash
+# Make the AppImage executable
+chmod +x Siliflow_1.1.0_amd64.AppImage
+
+# Run Siliflow directly
+./Siliflow_1.1.0_amd64.AppImage
+```
+
+#### Option B: Debian / Ubuntu (`.deb`)
+```bash
+sudo dpkg -i Siliflow_1.1.0_amd64.deb
+# If there are missing system libraries:
+sudo apt-get install -f
+```
+
+---
+
+## 3. EDA Hardware Toolchains
+
+Siliflow orchestrates industry-standard open-source silicon tools. While the editor, file tree, hierarchy viewer, and search work out of the box, simulation and schematic visualization interface with the following tools:
+
+| Tool | Purpose | Status |
+| :--- | :--- | :--- |
+| **Icarus Verilog** (`iverilog` + `vvp`) | Fast event-driven simulation & testbench execution | **Recommended** |
+| **Verilator** (`verilator_bin` or `verilator`) | Cycle-accurate 10x–100x high-speed simulation & linting | **Recommended** |
+| **Yosys** (`yosys`) | Logic synthesis & interactive RTL schematic elaboration | **Recommended** |
+| **GTKWave** | Optional external standalone waveform viewing | Optional |
+
+### Installing Toolchains on Windows
+
+The easiest method to get all silicon tools on Windows is via **MSYS2 / UCRT64** or the **OSS CAD Suite**:
+
+#### Using MSYS2:
+Open an MSYS2 UCRT64 terminal and run:
+```bash
+pacman -S mingw-w64-ucrt-x86_64-iverilog \
+          mingw-w64-ucrt-x86_64-verilator \
+          mingw-w64-ucrt-x86_64-yosys
+```
+Add `C:\msys64\ucrt64\bin` to your Windows System `PATH`. Siliflow also automatically discovers standard MSYS2 and OSS CAD Suite installations!
+
+### Installing Toolchains on macOS (Homebrew)
+
+```bash
+brew install icarus-verilog verilator yosys
+```
+
+### Installing Toolchains on Linux (Ubuntu / Debian)
+
+```bash
+sudo apt update
+sudo apt install -y iverilog verilator yosys gtkwave
+```
+
+---
+
+## 4. In-App Toolchain Status Verification
+
+You never have to guess whether your environment is configured properly.
+
+1. Look at the bottom-right status bar in Siliflow:
+   * If all tools are found, it displays a green pill: `iverilog + vvp • Verilator • Yosys`.
+   * If any tool is missing, it displays an interactive yellow button: `Tools Missing`.
+2. Click the tool status button anytime to open the **Toolchain Manager Modal**. It checks binary paths, installed versions, and provides instant install commands.

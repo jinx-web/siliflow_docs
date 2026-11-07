@@ -1,0 +1,59 @@
+# RTL Schematic Visualizer
+
+Visualizing hardware connections as gate-level schematics is essential for verifying synthesizer elaboration, debugging logic loops, and inspecting interconnects.
+
+Siliflow includes a built-in **RTL Schematic Visualizer** powered by **Yosys** logic synthesis and **netlistsvg**.
+
+---
+
+## 1. Opening the Schematic
+
+You can open the schematic view anytime:
+- Click the **Schematic** button in the top right of the editor tab bar.
+- Or click the **Schematic** pill in the top header.
+- Or right-click any Verilog file in the Explorer and choose **View RTL Schematic**.
+
+---
+
+## 2. Interactive Schematic Canvas
+
+The schematic canvas gives you full interactive control:
+
+- **Pan & Zoom**:
+  - Click and drag anywhere to pan the netlist canvas.
+  - Scroll mouse wheel to smoothly zoom in and out.
+  - Quick zoom buttons: Zoom In, Zoom Out, and Reset Zoom (100%).
+- **Fit Diagram to View**:
+  - Click the **Fit Diagram** button (`Crosshair` icon) to automatically scale and center the entire netlist within your screen bounds without clipping.
+- **True Fullscreen Mode**:
+  - Click the **Fullscreen** button (`Maximize2` icon) to expand the schematic viewer over the entire application window.
+  - Press <kbd>Esc</kbd> anytime to exit fullscreen.
+
+---
+
+## 3. Cell & Signal Inspector
+
+- **Click any Gate or Port**:
+  Clicking on any logic gate, multiplexer, D flip-flop, or port highlights the cell in yellow and opens the **Cell Inspector** sidebar.
+- **Port Connections**:
+  Shows pin connections and bit vector mappings (e.g. `clk [2]`, `D [7]`, `Q [6]`).
+- **Jump to RTL Source**:
+  Click the **Jump to Source Code** button in the inspector to instantly open the Verilog file and highlight the exact line that generated that logic gate!
+- **Interactive Wire Highlighting**:
+  Hovering your cursor over any interconnect line highlights the entire net in glowing blue across all connected pins.
+
+---
+
+## 4. Multi-Module Selector
+
+If your Verilog file contains multiple modules (e.g. top module, ALU, sub-counter), the clean module dropdown on the left of the toolbar lets you switch between schematics instantly without re-synthesizing.
+
+---
+
+## 5. Exporting High-Resolution Diagrams
+
+Need to include your RTL schematic in a lab report, research paper, or presentation?
+
+Click the **Download** dropdown button on the toolbar:
+1. **Download SVG**: Exports a vector graphic `.svg` file that scales infinitely without pixelation.
+2. **Download PNG**: Renders the schematic on a 2x high-resolution canvas with a dark background and saves a crisp `.png` image.

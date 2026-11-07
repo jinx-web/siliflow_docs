@@ -1,0 +1,36 @@
+# Module Hierarchy Visualizer
+
+In digital chip design, hardware engineers think in trees (e.g. `top_soc` → `cpu_core` → `alu` → `adder`). Standard code editors treat projects as flat file lists, making it difficult to understand complex hardware architectures.
+
+Siliflow includes a dedicated **Module Hierarchy Explorer** in the left Activity Bar.
+
+---
+
+## 1. What the Hierarchy Explorer Does
+
+The Module Hierarchy tree parses your entire workspace and reconstructs the real instantiated RTL design tree:
+
+```text
+📁 HIERARCHY
+└── 📦 top_soc (top_soc.v:1)
+    ├── 📦 u_clock_gen [clock_divider] (top_soc.v:24)
+    ├── 📦 u_cpu [riscv_core] (top_soc.v:38)
+    │   ├── 📦 u_regfile [registers] (riscv_core.v:12)
+    │   └── 📦 u_alu [alu_unit] (riscv_core.v:45)
+    │       └── 📦 u_adder [fast_adder] (alu_unit.v:18)
+    └── 📦 u_uart [uart_controller] (top_soc.v:56)
+```
+
+---
+
+## 2. Key Features
+
+- **Instant Cross-Navigation**:
+  - Click on any instance name in the tree to jump directly to the line in your source code where it is instantiated.
+  - Double-click the module type to jump to the module declaration file.
+- **Root & Top-Level Detection**:
+  - Automatically identifies root modules and testbenches that are not instantiated by any other module.
+- **Port & Parameter Badges**:
+  - Hover over any module in the tree to view its port count, parameter configurations, and source file path.
+- **Live Workspace Sync**:
+  - Automatically updates as you edit your RTL or add new submodules.

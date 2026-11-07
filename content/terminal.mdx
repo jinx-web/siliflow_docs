@@ -1,0 +1,44 @@
+# Integrated Silicon Terminal
+
+Hardware engineers constantly run build commands, `make`, `pytest`, `git`, and CLI tools. Siliflow includes an **Integrated Silicon Terminal** embedded directly in the bottom panel.
+
+---
+
+## 1. Opening the Terminal
+
+- Click the **Terminal** tab in the bottom panel.
+- Or click the **Terminal** toggle button in the bottom-left status bar.
+- Or press <kbd>Ctrl+\`</kbd>.
+
+---
+
+## 2. Automatic Shell Detection
+
+Siliflow inspects your host operating system and automatically launches the preferred native shell:
+
+- **Windows**: Defaults to **PowerShell 7 / Windows PowerShell** or Command Prompt (`cmd.exe`). Also auto-detects **Git Bash** if installed at `C:\Program Files\Git\bin\bash.exe`.
+- **macOS**: Defaults to **Zsh** or standard `/bin/bash`.
+- **Linux**: Defaults to your login shell (`/bin/bash` or `zsh`).
+
+---
+
+## 3. Automatic EDA Tool PATH Injection
+
+On Windows and specialized development systems, EDA tools like `iverilog`, `vvp`, `verilator`, and `yosys` are often installed in MSYS2 or standalone directories that are not globally added to the user's system `PATH`.
+
+When Siliflow spawns a terminal session:
+1. It automatically scans for known toolchain installations:
+   - `C:\msys64\ucrt64\bin`
+   - `C:\msys64\mingw64\bin`
+   - `C:\iverilog\bin`
+   - `C:\oss-cad-suite\bin`
+2. It **prepends these tool directories into the terminal's active `PATH`** environment!
+3. This means you can type `iverilog -V`, `yosys`, or `verilator --version` directly in the Siliflow terminal and they will execute immediately without manual environment variable tweaking.
+
+---
+
+## 4. Multi-Session Management
+
+- Click the **`+`** icon on the terminal toolbar to spawn a new shell session.
+- Switch between active sessions using the session dropdown tab.
+- Click the trash can icon or type `exit` to close a session.

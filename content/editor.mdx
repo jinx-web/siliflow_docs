@@ -1,0 +1,55 @@
+# Smart RTL Code Editor
+
+Siliflow incorporates a tailored **Monaco-based editor** tuned specifically for Verilog (IEEE 1364) and SystemVerilog (IEEE 1800-2017).
+
+---
+
+## 1. Smarter Navigation: Go to Definition (<kbd>F12</kbd>)
+
+Hardware projects often consist of dozens of interconnected modules and signals. You no longer have to manually search for declarations.
+
+- Press <kbd>F12</kbd> (or <kbd>Ctrl+Click</kbd> / Right-click → **Go to Definition**) on any:
+  - Submodule instantiation (e.g. `alu u_alu (...)`) to jump directly to the target `module alu (...)` definition.
+  - Wire, reg, or logic signal to jump to its declaration.
+  - Parameter or localparam to jump to its value assignment.
+- Works across both the current file and across all files in your open project workspace.
+
+---
+
+## 2. Signal Autocomplete & IntelliSense
+
+As you type, Siliflow automatically scans your active module, port lists, and declared nets:
+
+- **Signal Suggestions**: Automatically suggests port names, wire declarations, and registers.
+- **Port Direction Metadata**: Displays port direction (`input`, `output`, `inout`) and bitwidth (e.g., `[7:0]`, `[31:0]`).
+- **Snippet Generators**:
+  - `mod` → Automatically generates a complete module skeleton.
+  - `ff` → Generates standard synchronous flip-flop `always @(posedge clk)` blocks.
+  - `comb` → Generates combinational `always @(*)` logic.
+  - `tb` → Generates a complete testbench scaffold with clock generator and `$dumpfile`.
+
+---
+
+## 3. Signal Hover Cards
+
+Hovering your mouse over any signal or instance displays a rich hover preview card:
+- Exact declaration line and source file.
+- Signal type (`wire`, `reg`, `logic`, `parameter`).
+- Bit vector width (e.g. `[15:0]`).
+
+---
+
+## 4. Live Linting & Problems Panel
+
+Siliflow runs real-time background syntax checking:
+- Errors and warnings appear with red and yellow squigglies directly under the offending code lines.
+- The **Problems** tab in the bottom panel lists all workspace diagnostics sorted by severity, tool (`iverilog` / `verilator`), and file location.
+- Clicking any problem line instantly navigates your editor cursor to that exact line and column.
+
+---
+
+## 5. Editor Productivity Features
+
+- **Middle-Click Scroll Mouse Tab Close**: Quickly close tabs by clicking your mouse wheel on any tab.
+- **Auto-Formatting**: Re-align port lists and indentations.
+- **Instant Search Across Files** (<kbd>Ctrl+Shift+F</kbd>): Search any signal, regex, or macro across every file in the project with case-matching and whole-word filters.

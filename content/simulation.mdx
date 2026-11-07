@@ -1,0 +1,38 @@
+# Dual Simulation Engines
+
+Siliflow comes with native integration for the two most widely used open-source hardware simulators: **Icarus Verilog** and **Verilator**.
+
+---
+
+## 1. Engine Comparison
+
+| Feature | Icarus Verilog (`iverilog` + `vvp`) | Verilator (`verilator_bin`) |
+| :--- | :--- | :--- |
+| **Execution Paradigm** | Event-driven interpreted simulation | Compiles Verilog into high-speed native C++ binary |
+| **Speed** | Fast compilation, standard simulation speed | **10x to 100x faster execution speed** |
+| **Best For** | Quick unit tests, behavioral testbenches, `$display` | Large SoCs, cycle-accurate verification, deep regressions |
+| **Timing Support** | Full standard delay timing (`#5`) | Supported via `--timing` flag in modern Verilator |
+| **Waveform Output** | Standard `.vcd` generation | High-speed `.vcd` and fast tracing |
+
+---
+
+## 2. Running a Simulation
+
+1. Open any testbench (e.g. `counter_tb.v`).
+2. In the top toolbar, choose your engine from the simulator dropdown:
+   - **`iverilog + vvp`**
+   - **`verilator`**
+3. Click the green **Simulate** button (or press <kbd>F5</kbd>).
+
+---
+
+## 3. What Happens Under the Hood
+
+1. **Root Module Elaboration**:
+   Siliflow automatically determines the root module of your active testbench and passes `-s <root_module>` to prevent unselected testbenches from executing concurrently.
+2. **Real-time Log Streaming**:
+   Compilation and simulation stdout/stderr streams directly into the **Output** bottom panel in real time.
+3. **Auto-Reveal on Failure**:
+   If compilation fails, Siliflow automatically opens the **Problems** tab, highlighting exact error locations.
+4. **Automatic Waveform Detection**:
+   When simulation generates a VCD trace (`$dumpfile("waveform.vcd")`), Siliflow automatically discovers the newly created waveform file and loads it into the embedded Waveform viewer.

@@ -1,128 +1,94 @@
-# Getting Started & Instant F5 Simulation
+# Getting Started & Workspaces
 
-Get up and running with SiliFlow Studio in under two minutes. This guide walks you through workspace setup, writing your first synchronous RTL module, creating a testbench, and executing an instant simulation with `F5`.
-
----
-
-## 1. Quick Installation
-
-Download the official standalone archive for your operating system:
-
-### Windows (MSI or Portable ZIP)
-```powershell
-# Extract portable distribution
-Expand-Archive -Path siliflow-studio-win64.zip -DestinationPath C:\Tools\SiliFlow
-# Launch SiliFlow IDE
-C:\Tools\SiliFlow\siliflow.exe
-```
-
-### macOS (Homebrew or DMG)
-```bash
-brew install siliflow/tap/siliflow-studio
-siliflow
-```
-
-### Linux (Tarball or AppImage)
-```bash
-chmod +x SiliFlow-x86_64.AppImage
-./SiliFlow-x86_64.AppImage
-```
+Siliflow is designed to feel familiar to anyone who has used VS Code, but purpose-built with silicon engineering workflows at its core.
 
 ---
 
-## 2. Directory Structure Convention
+## 1. Opening a Workspace
 
-SiliFlow automatically indexes standard hardware workspace conventions:
+When you launch Siliflow, you are welcomed by the onboarding screen:
 
-```text
-my-silicon-project/
-├── siliflow.config.json    # Project & simulation configuration
-├── rtl/
-│   └── counter.v           # Synthesizable RTL modules
-└── tb/
-    └── counter_tb.v        # Verification testbenches
-```
+- **Open Folder**: Select any local directory containing Verilog (`.v`), SystemVerilog (`.sv`, `.svh`), or header (`.vh`) files.
+- **Try Demo Project**: One-click onboarding button on the Welcome screen or Explorer sidebar. It instantly loads the included `demo_project` containing a 4-bit synchronous counter, full testbench, and preconfigured simulation scripts.
+- **Clone from URL**: Clone any Git hardware repository (e.g., from GitHub or GitLab) directly into your workspace.
+- **Recent Workspaces**: Instantly re-open your most recent projects from the quick-access list.
 
 ---
 
-## 3. Writing Your First RTL Module
+## 2. Workspace Project Structure (`project.json`)
 
-Create a file named `rtl/counter.v`:
+Siliflow works seamlessly with raw Verilog files, but you can also define a `project.json` in your workspace root for advanced build automation:
 
-```verilog
-`timescale 1ns / 1ps
-
-module counter (
-    input  wire       clk,
-    input  wire       rst_n,
-    input  wire       en,
-    output reg  [7:0] count
-);
-
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            count <= 8'h00;
-        end else if (en) begin
-            count <= count + 1'b1;
-        end
-    end
-
-endmodule
+```json
+{
+  "name": "counter_project",
+  "topModule": "counter_tb",
+  "sourceFiles": [
+    "src/counter.v",
+    "sim/counter_tb.v"
+  ],
+  "includeDirs": [
+    "include"
+  ],
+  "defines": [
+    "DEBUG_MODE"
+  ],
+  "testbenches": [
+    {
+      "name": "counter_tb",
+      "file": "sim/counter_tb.v",
+      "simulator": "iverilog"
+    },
+    {
+      "name": "fast_counter_tb",
+      "file": "sim/counter_tb.v",
+      "simulator": "verilator"
+    }
+  ]
+}
 ```
+
+### Configuration Fields
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | Display name of the silicon project |
+| `topModule` | `string` | Primary default root module |
+| `sourceFiles` | `string[]` | Ordered list of source RTL and testbench files |
+| `includeDirs` | `string[]` | Directory paths passed via `-I` to simulators |
+| `defines` | `string[]` | Macro definitions passed via `-D` to compilers |
+| `testbenches` | `array` | Dedicated list of testbench targets with engine presets |
 
 ---
 
-## 4. Writing the Testbench
+## 3. UI Overview & Layout
 
-Create a testbench at `tb/counter_tb.v` with standard VCD trace dumps:
+Siliflow is divided into 5 focused functional zones:
 
-```verilog
-`timescale 1ns / 1ps
-
-module counter_tb;
-    reg clk;
-    reg rst_n;
-    reg en;
-    wire [7:0] count;
-
-    // Instantiate Unit Under Test (UUT)
-    counter uut (
-        .clk(clk),
-        .rst_n(rst_n),
-        .en(en),
-        .count(count)
-    );
-
-    // 100MHz Clock Generation
-    always #5 clk = ~clk;
-
-    initial begin
-        // Configure VCD dump for SiliFlow viewer
-        $dumpfile("sim_output.vcd");
-        $dumpvars(0, counter_tb);
-
-        clk   = 0;
-        rst_n = 0;
-        en    = 0;
-
-        #20 rst_n = 1;
-        #10 en    = 1;
-        #100 en   = 0;
-        #30  en   = 1;
-        #50  $finish;
-    end
-endmodule
-```
-
----
-
-## 5. The Magic: Instant F5 Simulation
-
-With both files open in SiliFlow:
-
-1. Press **`F5`** (or click the blue **▶ Simulate** button in the header toolbar).
-2. SiliFlow automatically invokes the target simulator (default: `iverilog` or native engine).
-3. Within **~38ms**, the embedded waveform pane pops up directly underneath your editor displaying active clock transitions and signal buses.
-
-> **Tip:** You can press **`Ctrl + R`** (or **`Cmd + R`** on macOS) to hot-reload simulation traces without restarting the IDE or re-scrolling your waveform view.
-
+1. **Title Bar**:
+   - Quick file switcher & Command Palette (<kbd>Ctrl+P</kbd>).
+   - Global **Save** (<kbd>Ctrl+S</kbd>).
+   - Quick **Simulate** action button.
+   - **Waveform** and **Schematic** toggle buttons.
+2. **Activity Bar** (Far Left):
+   - **Explorer**: File management, new file/folder, drag-and-drop.
+   - **Search Across Files** (<kbd>Ctrl+Shift+F</kbd>): Regex, case-sensitive search.
+   - **Module Hierarchy Tree**: Real-time instantiated RTL tree.
+   - **Source Control**: Git branch, commit, stage, discard, and diff viewer.
+3. **Editor Area**:
+   - Multi-tab Monaco code editor.
+   - Middle-click tab close support.
+   - Split view and watermark empty state.
+4. **Bottom Panel**:
+   - **Problems**: Live syntax, parser, and lint diagnostics.
+   - **Output**: Detailed compilation logs.
+   - **Terminal**: Embedded interactive silicon terminal.
+   - **Waveform**: Embedded interactive VCD waveform canvas.
+   - **Run History**: Historical record of compilation times, passes, and fails.
+   - **Regression**: Pass/fail table for automated test suite execution.
+5. **Status Bar** (Bottom):
+   - Active Git branch.
+   - Problems counter.
+   - Active terminal toggle.
+   - EDA Toolchain status pill.
+   - Cursor position (Line / Column), encoding, and active language mode.

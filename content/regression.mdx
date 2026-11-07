@@ -1,0 +1,36 @@
+# Regression Test Runner
+
+In commercial ASIC/FPGA design and university laboratory courses, verifying a single testbench is rarely enough. Projects contain entire suites of unit tests for ALUs, register files, UARTs, memory controllers, and top-level integration.
+
+Siliflow includes an automated **Regression Suite Runner** built right into the bottom panel.
+
+---
+
+## 1. Opening the Regression Runner
+
+1. Click the **Regression** tab in the bottom panel.
+2. Siliflow automatically discovers all testbenches defined in your `project.json` or scans your workspace for files ending in `_tb.v`, `_tb.sv`, or `tb_*.v`.
+
+---
+
+## 2. Running the Test Suite
+
+- Click **Run All Tests** to kick off the regression runner.
+- Siliflow compiles and executes each testbench in an isolated process.
+
+---
+
+## 3. Results & Suite Table
+
+The regression panel displays a real-time Pass/Fail table:
+
+| Status | Testbench Name | File Path | Duration | Engine | Waveform |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| <span style={{color: '#3fb950', fontWeight: 'bold'}}>PASS</span> | `counter_tb` | `sim/counter_tb.v` | 38 ms | iverilog | `[Open VCD]` |
+| <span style={{color: '#3fb950', fontWeight: 'bold'}}>PASS</span> | `alu_tb` | `tests/alu_tb.sv` | 14 ms | verilator | `[Open VCD]` |
+| <span style={{color: '#f85149', fontWeight: 'bold'}}>FAIL</span> | `uart_rx_tb` | `sim/uart_rx_tb.v` | 112 ms | iverilog | `[Logs]` |
+
+### Features:
+- **Summary Header**: Shows total tests run, passed count, failed count, and total execution time.
+- **Instant VCD Loading**: Click **Open VCD** on any passed row to immediately inspect that test's waveforms in the waveform canvas.
+- **Failure Logs**: Click on any failed row to view compiler diagnostics or assertion error logs.
