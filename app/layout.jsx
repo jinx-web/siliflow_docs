@@ -4,11 +4,36 @@ import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 
 export const metadata = {
+  metadataBase: new URL('https://www.siliflow.in'),
   title: {
     template: '%s - SiliFlow Studio Docs',
     default: 'SiliFlow Studio Documentation'
   },
   description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.',
+  alternates: {
+    canonical: '/docs',
+  },
+  openGraph: {
+    type: 'website',
+    url: 'https://www.siliflow.in/docs',
+    title: 'SiliFlow Studio Documentation',
+    description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.',
+    siteName: 'SiliFlow',
+    images: [
+      {
+        url: '/docs/logo.png',
+        width: 200,
+        height: 200,
+        alt: 'SiliFlow Studio Documentation',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'SiliFlow Studio Documentation',
+    description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.',
+    images: ['/docs/logo.png'],
+  },
   icons: {
     icon: [
       { url: '/docs/favicon.ico', sizes: 'any' },
