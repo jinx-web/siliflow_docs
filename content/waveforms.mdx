@@ -1,69 +1,35 @@
-# Waveform Viewer Guide
+# Interactive Waveform Viewer
 
-The SiliFlow Embedded Waveform Viewer is built directly into the core editor layout. It replaces clumsy external GTKWave popups with a hardware-accelerated WebGPU/Canvas renderer capable of streaming multi-gigabyte `.vcd` and `.fst` waveform traces smoothly at 60 FPS.
+SiliFlow embeds a native waveform viewer directly in the bottom panel or editor tab strip—eliminating context-switching to external windows for day-to-day verification.
 
----
-
-## Key Capabilities
-
-- **Zero-Window Juggling**: Waveforms display synchronously right below your code editor pane.
-- **Bi-Directional Cross-Probing**: Clicking any transition on a waveform trace immediately navigates your code cursor to the driving signal declaration or `always_ff` statement in your Verilog source.
-- **Bus Expansion & Radix Formatting**: Expand multi-bit vectors into individual bits or change display representations to Hexadecimal, Binary, Signed Decimal, or ASCII with one keystroke.
-- **Microsecond & Picosecond Precision Cursors**: Drop dual markers ($C_1$ and $C_2$) to measure clock cycle periods, setup times, and propagation delays ($\Delta T$).
+{/* SCREENSHOT_SLOT: docs-waveform-viewer.png — Embedded Waveform Viewer with signal tree, bus transitions, Cursor A/B delta, and radix selector */}
 
 ---
 
-## Interactive Controls & Shortcuts
+## 1. Supported Formats & Rust `wellen` Parser
 
-| Action | Mouse / Trackpad | Keyboard Shortcut |
-| :--- | :--- | :--- |
-| **Zoom In / Out** | `Ctrl + Scroll Wheel` / Pinch | `+` / `-` |
-| **Pan Timeline** | Left Click + Drag Canvas | `Left` / `Right` Arrow |
-| **Drop Primary Cursor ($C_1$)** | Left Click on timeline header | `1` |
-| **Drop Secondary Cursor ($C_2$)**| `Shift + Left Click` | `2` |
-| **Zoom to Full Simulation Extent** | Double Click Timeline | `Space` or `F` |
-| **Expand Bus Vector** | Click ▶ triangle beside bus name | `Enter` when selected |
-| **Switch Radix (Hex / Dec / Bin)** | Right-click signal row | `X` (Hex), `D` (Dec), `B` (Bin) |
+- Powered by the native Rust **`wellen`** parser (`commands/waveform.rs`), supporting both **VCD** (`.vcd`) and **FST** (`.fst`) waveform traces up to **100 MB** (with automatic fallback line-parser recovery for malformed VCD headers).
+- Hold `Alt` while clicking **Waveform** in the Action Island (`Alt+Click`) to open waveforms directly in the secondary split pane beside your RTL code.
 
 ---
 
-## Cross-Probing Signals to Source RTL
+## 2. Key Capabilities
 
-One of SiliFlow's most beloved features is **Cross-Probing**:
-
-```
-[Waveform Pane]
-clk    ───┐   ┌───┐   ┌───┐   ┌───┐   ┌───
-rst_n  ───────┘   ────────────────────────
-count  [00]───[01]───[02]───[03]───[04]───
-                ▲
-                │ Left-Click Transition at T=42.5ns
-                ▼
-[Source RTL Editor]
-42:    always @(posedge clk or negedge rst_n) begin
-43:        if (!rst_n) count <= 8'h00;
-44:▶       else if (en) count <= count + 1'b1;  <-- Automatically highlighted!
-45:    end
-```
-
-### How to use:
-1. Hover over any value transition or glitch line on the waveform trace.
-2. Hold `Ctrl` (or `Cmd` on macOS) and click the transition edge.
-3. The editor immediately focuses the corresponding RTL file and highlights the line where that assignment occurred.
+- **1-Bit & Multi-Bit Bus Rendering**: Clear digital transitions for scalar nets and packed vectors, with red **`X`** unknown-state hazard highlighting and amber **`Z`** high-impedance highlighting.
+- **Radix Switching (`HEX` / `BIN` / `DEC` / `OCT`)**: Switch global bus representation cleanly across Hexadecimal, Binary, Decimal, and Octal.
+- **Dual Measurement Cursors (`Cursor A` & `Cursor B`)**:
+  - Place and inspect independent primary/secondary time markers (`Cursor A`, `Cursor B`).
+  - View exact timestamps, **`ΔT` delta**, and derived **frequency (`Hz` / `kHz` / `MHz` / `GHz`)**, alongside live hover cursor time tracking.
+- **Collapsible Scope Tree & Signal Filter**: Resizable signal sidebar (`70–450px`, saved across sessions), expandable DUT hierarchy scopes, scope dropdown filter, and substring/regex signal filter.
+- **Go to Signal Definition & GTKWave Handoff**: Jump straight from a waveform signal to its RTL declaration via `VerilogWorkspaceIndex`, copy signal names/paths/values, or open huge external runs directly in **GTKWave** from the Run menu (`Run → Open in External GTKWave`).
 
 ---
 
-## Handling Large Traces (FST / Fast Trace Format)
+## 3. Navigation Controls
 
-While standard `.vcd` files are supported, large industrial runs generating tens of millions of cycles can create massive files. SiliFlow automatically streams `.fst` (Fast Signal Trace) files with on-demand chunk decompression:
-
-```verilog
-// In your testbench for ultra-fast dumping
-initial begin
-    $dumpfile("sim_output.fst");
-    $dumpvars(0, counter_tb);
-end
-```
-
-SiliFlow's streaming reader indexes signal offsets in memory, keeping RAM consumption under **80MB** even for multi-gigabyte traces.
-
+| Interaction | Action |
+| :--- | :--- |
+| **Mouse Wheel** | Smooth zoom centered around cursor timestamp |
+| **Click + Drag on Canvas** | Pan timeline horizontally |
+| **Zoom In / Out / Fit All** | Toolbar zoom buttons to inspect clock cycles or fit full trace |
+| **Cursor A / B Placement** | Click timeline ruler to inspect edges and measure `ΔT` / frequency |

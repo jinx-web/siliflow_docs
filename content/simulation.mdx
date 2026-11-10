@@ -1,39 +1,38 @@
 # Dual Simulation Engines
 
-Siliflow comes with native integration for the two most widely used open-source hardware simulators: **Icarus Verilog** and **Verilator**.
+SiliFlow integrates both **Icarus Verilog (`iverilog` + `vvp`)** and **Verilator (`verilator`)**, along with automatic **`sv2v`** SystemVerilog preprocessing and **Slang** structural diagnostics.
+
+{/* SCREENSHOT_SLOT: docs-simulation-output.png — Simulate button, engine selector, live Output console, and status verdict */}
 
 ---
 
 ## 1. Engine Comparison
 
-| Feature | Icarus Verilog (`iverilog` + `vvp`) | Verilator (`verilator_bin`) |
+| Feature | Icarus Verilog (`iverilog` + `vvp`) | Verilator (`verilator`) |
 | :--- | :--- | :--- |
-| **Execution Paradigm** | Event-driven interpreted simulation | Compiles Verilog into high-speed native C++ binary |
-| **Speed** | Fast compilation, standard simulation speed | **10x to 100x faster execution speed** |
-| **Best For** | Quick unit tests, behavioral testbenches, `$display` | Large SoCs, cycle-accurate verification, deep regressions |
-| **Timing Support** | Full standard delay timing (`#5`) | Supported via `--timing` flag in modern Verilator |
-| **Waveform Output** | Standard `.vcd` generation | High-speed `.vcd` and fast tracing |
+| **Execution Paradigm** | Event-driven interpreted simulation | Compiles RTL into high-speed C++ executable |
+| **Best For** | Behavioral testbenches, rapid iteration, `$display` logs | Cycle-accurate high-throughput SoCs & deep regressions |
+| **SystemVerilog Support** | Auto-preprocessed via `sv2v` when needed | Native modern SystemVerilog + `--timing` support |
+| **Waveform Output** | Standard `.vcd` dump discovery | High-speed `.vcd` and trace support |
+
+Switch engines anytime from **Run → Simulator Engine**, Settings (<kbd>Ctrl+,</kbd>), the Run & Simulation sidebar, or `project.json`.
 
 ---
 
-## 2. Running a Simulation
+## 2. Running & Aborting Simulations
 
-1. Open any testbench (e.g. `counter_tb.v`).
-2. In the top toolbar, choose your engine from the simulator dropdown:
-   - **`iverilog + vvp`**
-   - **`verilator`**
-3. Click the green **Simulate** button (or press <kbd>F5</kbd>).
+1. Open any RTL file or testbench (e.g., `spi_packet_engine_tb.sv`).
+2. Optionally pick a specific testbench target under **Run → Active Testbench** or the Run & Simulation sidebar.
+3. Click **Simulate** in the top Action Island or press <kbd>F5</kbd>.
+4. Click **Stop** or press <kbd>Shift+F5</kbd> anytime to abort immediately.
 
 ---
 
-## 3. What Happens Under the Hood
+## 3. Watchdog Protection & Pipeline Execution
 
-1. **Root Module Elaboration**:
-   Siliflow automatically determines the root module of your active testbench and passes `-s <root_module>` to prevent unselected testbenches from executing concurrently.
-2. **Real-time Log Streaming**:
-   Compilation and simulation stdout/stderr streams directly into the **Output** bottom panel in real time.
-3. **Auto-Reveal on Failure**:
-   If compilation fails, Siliflow automatically opens the **Problems** tab, highlighting exact error locations.
-4. **Automatic Waveform Detection**:
-   When simulation generates a VCD trace (`$dumpfile("waveform.vcd")`), Siliflow automatically discovers the newly created waveform file and loads it into the embedded Waveform viewer.
+Under the hood, SiliFlow's Rust runner orchestrates four stages on asynchronous Tokio background threads so the editor UI stays 100% responsive:
 
+1. **Testbench & RTL Discovery**: Classifies workspace RTL vs. testbenches (`sim/`, `tb/`, `test/`, `tests/` or `_tb` / `tb_` naming) or follows `project.json` ordering with `-I` include dirs and `-D` defines.
+2. **Automatic `sv2v` Transpilation**: If a design uses SystemVerilog features (`logic`, `always_ff`, enums, interfaces) while running Icarus Verilog, `sv2v` preprocesses cleanly in an isolated temp pass.
+3. **Configurable Watchdog Timer**: Enforces a configurable timeout (**120 seconds default**, tunable from **10 to 7200 seconds** in Settings) so accidental infinite loops (like `always #0 clk = ~clk;`) never freeze your workstation.
+4. **Live Log Streaming & Auto-Load**: Compiler/runtime stdout streams directly into the **Output** panel, diagnostics route to **Problems**, and generated `.vcd` / `.fst` traces load cleanly into the built-in Waveform viewer.

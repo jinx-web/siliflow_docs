@@ -1,0 +1,44 @@
+# Static Timing Analysis (STA)
+
+SiliFlow Studio `v1.2.0` embeds a **Yosys-backed Static Timing Analysis engine** directly in the bottom **Timing (STA)** panel—measuring setup timing, maximum clock frequency (**Fmax**), and critical paths inside your editor.
+
+{/* SCREENSHOT_SLOT: docs-sta-timing.png — Timing (STA) bottom panel + Monaco inline glowing critical-path overlay */}
+
+---
+
+## 1. Opening Static Timing Analysis
+
+- Open the **Timing (STA)** tab in the bottom panel.
+- Or choose **Run → Quick Open Panels → Timing Analysis (STA)** / **View → Bottom Panels → Timing (STA)**.
+
+---
+
+## 2. Technology Library Presets & Custom Liberty (`.lib`)
+
+Choose your target cell timing model directly inside the STA bar (or set `flow.targetPDK` and `flow.clockPeriodNs` in `project.json`):
+
+| Library Preset / Option | Use Case |
+| :--- | :--- |
+| **`45nm`** | Standard-cell ASIC estimation (Nangate / FreePDK45 scale) |
+| **`130nm`** | Open-PDK ASIC timing estimation (SkyWater 130nm scale) |
+| **`fpga_lut4`** | 4-input LUT FPGA fabric estimation |
+| **Custom `.lib`** | Point SiliFlow to your own Liberty timing library file on disk |
+
+---
+
+## 3. Signoff Telemetry & Critical Path Breakdown
+
+Configure target clock frequency (`MHz` / clock period `ns`) and optional top-module override to inspect:
+
+- **Signoff Verdict**: Target Period (`ns`), Critical Path Delay (`ns`), **Slack (`ns`)** with clear **MET / VIOLATED** badge, achievable **Fmax (`MHz`)**, Logic Levels, Launch **Startpoint**, and Capture **Endpoint**.
+- **Dual Path Inspection Mode**:
+  - **RTL Hops**: Source-level stage breakdown mapped back to your Verilog/SystemVerilog logic.
+  - **Gate Hops**: Synthesized cell-by-cell delay with cumulative stage percentage bars.
+
+---
+
+## 4. Monaco Inline Path Overlay
+
+Toggle **Inline Overlay** in the STA panel to highlight bottlenecks right inside your HDL buffer:
+- Glowing inline line markers (`siliflow-sta-path-highlight`) annotate critical RTL statements directly in Monaco.
+- Clicking any hop in the STA panel jumps the code cursor cleanly to the code pane and flashes that exact line (`siliflow-sta-hop-flash`).

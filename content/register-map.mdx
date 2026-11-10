@@ -1,0 +1,35 @@
+# Visual Register Map & CSR Studio
+
+Writing control/status register (CSR) slave logic, C `#define` headers, and Markdown register tables manually invites bit-offset drift bugs. SiliFlow includes a visual **Register Map & Memory Editor** that generates all four artifacts in lockstep.
+
+{/* SCREENSHOT_SLOT: docs-register-map.png — Visual Register Map Designer showing APB/AXI4-Lite fields and live RTL/C header preview */}
+
+---
+
+## 1. Opening the Register Map Designer
+
+- Click the **Register Map** icon in the left Activity Bar.
+- Or choose **Tools → Visual Register Map & CSR**.
+
+---
+
+## 2. Interactive Bus & Bitfield Configuration
+
+Configure peripherals visually inside the designer:
+
+- **Bus Protocol**: Switch seamlessly between **`APB`**, **`AXI4-Lite`**, and **`Simple`** native slave interfaces.
+- **Geometry**: Define peripheral module name, 32-bit data width, configurable `1–64` address width, and 4-byte-aligned register offsets.
+- **Bitfields & Access Policies**: Add bitfields with explicit bit slices (`[msb:lsb]`), reset defaults, and **`RW`**, **`RO`**, **`WO`**, or **`W1C`** (Write-1-to-Clear) semantics.
+- **Real-Time Validation**: Automatically catches invalid Verilog/C identifiers, unaligned offsets, duplicate register addresses, out-of-range bit indices, and overlapping fields before export.
+
+---
+
+## 3. Synchronized 4-Target Export (`preview_register_map` / `export_register_map`)
+
+Preview and export four synchronized files directly into your open project workspace:
+
+1. **Synthesizable Verilog / SystemVerilog Slave** (`verilog_rtl`) — Complete bus slave RTL ready for synthesis and simulation.
+2. **Firmware C Header (`.h`)** (`c_header`) — Type-safe `#define` register offsets, field masks, and bit-shift constants.
+3. **SystemRDL Specification (`.rdl`)** (`system_rdl`) — Portable IP-XACT / SystemRDL definition.
+4. **Markdown Register Reference (`.md`)** (`markdown_doc`) — Formatted register tables with offsets and field descriptions.
+

@@ -1,37 +1,37 @@
 # Module Hierarchy Visualizer
 
-In digital chip design, hardware engineers think in trees (e.g. `top_soc` → `cpu_core` → `alu` → `adder`). Standard code editors treat projects as flat file lists, making it difficult to understand complex hardware architectures.
+Hardware engineers design in nested instance trees rather than flat file lists. SiliFlow builds a live RTL **Module Hierarchy Explorer** directly inside the left Activity Bar (<kbd>Ctrl+Shift+H</kbd>).
 
-Siliflow includes a dedicated **Module Hierarchy Explorer** in the left Activity Bar.
+{/* SCREENSHOT_SLOT: docs-hierarchy-tree.png — Module Hierarchy sidebar panel with search filter and context menu */}
 
 ---
 
-## 1. What the Hierarchy Explorer Does
+## 1. Automatic Instantiation Tree Construction
 
-The Module Hierarchy tree parses your entire workspace and reconstructs the real instantiated RTL design tree:
+`HierarchyViewer` scans all `.v` and `.sv` files across your workspace to construct the complete parent-child design hierarchy:
 
 ```text
-📁 HIERARCHY
-└── 📦 top_soc (top_soc.v:1)
-    ├── 📦 u_clock_gen [clock_divider] (top_soc.v:24)
-    ├── 📦 u_cpu [riscv_core] (top_soc.v:38)
-    │   ├── 📦 u_regfile [registers] (riscv_core.v:12)
-    │   └── 📦 u_alu [alu_unit] (riscv_core.v:45)
-    │       └── 📦 u_adder [fast_adder] (alu_unit.v:18)
-    └── 📦 u_uart [uart_controller] (top_soc.v:56)
+MODULE HIERARCHY
+└── top_soc (top_soc.sv:1)
+    ├── u_clk_gen [clk_div] (top_soc.sv:18)
+    ├── u_cpu [riscv_mini] (top_soc.sv:32)
+    │   ├── u_regfile [regfile_32x32] (riscv_mini.sv:14)
+    │   └── u_alu [alu_4bit] (riscv_mini.sv:49)
+    └── u_apb_gpio [apb_gpio] (top_soc.sv:71)
 ```
+
+- **Top-Module Auto-Detection & Override**: Automatically detects uninstantiated root modules and testbenches, with a **Top-Module dropdown selector** when a workspace contains multiple subsystems.
+- **Missing-Module Indicators**: Highlights unresolved sub-module references clearly so broken instantiations are caught before synthesis.
+- **Search & Tree Controls**: Filter deeply nested trees instantaneously and toggle **Expand All / Collapse All** with one click.
 
 ---
 
-## 2. Key Features
+## 2. Context Menu Actions
 
-- **Instant Cross-Navigation**:
-  - Click on any instance name in the tree to jump directly to the line in your source code where it is instantiated.
-  - Double-click the module type to jump to the module declaration file.
-- **Root & Top-Level Detection**:
-  - Automatically identifies root modules and testbenches that are not instantiated by any other module.
-- **Port & Parameter Badges**:
-  - Hover over any module in the tree to view its port count, parameter configurations, and source file path.
-- **Live Workspace Sync**:
-  - Automatically updates as you edit your RTL or add new submodules.
+Right-click any instance or module node in the Hierarchy Explorer for five targeted actions:
 
+1. **Go to Instance**: Opens the parent RTL file and scrolls to the exact instantiation line.
+2. **Go to Definition**: Opens the child module's source file at its `module ...` header.
+3. **Copy Hierarchical Path**: Copies the dot-separated RTL path (e.g., `top_soc.u_cpu.u_alu`) for testbench probes and `$dumpvars` filters.
+4. **Copy Instantiation**: Copies ready-to-paste parameterized module instantiation code.
+5. **Set as Top Module**: Pins the selected module as the workspace root for synthesis, STA, and CDC/RDC analysis.

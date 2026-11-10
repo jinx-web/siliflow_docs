@@ -1,0 +1,39 @@
+# CDC & RDC Structural Verification
+
+Multi-clock designs fail silently in simulation when signals or asynchronous resets cross clock boundaries without proper synchronization. SiliFlow embeds a structural **Clock Domain Crossing (CDC)** and **Reset Domain Crossing (RDC)** explorer powered by Yosys RTLIL netlist extraction.
+
+{/* SCREENSHOT_SLOT: docs-cdc-rdc.png — Structural CDC & RDC Explorer showing clock matrix heatmap, 5 rule checks, and waiver toggle */}
+
+---
+
+## 1. Opening the CDC & RDC Explorer
+
+- Click the **CDC / RDC** tab in the bottom panel.
+- Or select **Run → Quick Open Panels → Structural CDC & RDC Explorer** / **View → Bottom Panels → CDC / RDC**.
+- Try it immediately on the built-in **Dual-Clock CDC & RDC Lab** example (`cdc_demo.v`).
+
+---
+
+## 2. Automated Clock Domain Graph
+
+SiliFlow parses elaborated Yosys netlists to detect every clock network (`ClockDomainInfo` with flip-flop counts and derived/parent clock relationships) and builds an interactive **Source Clock × Destination Clock Matrix Heatmap**. Clicking any matrix cell filters crossings strictly to that clock pair.
+
+---
+
+## 3. Five Built-In Structural Rule Checks
+
+| Rule ID | Condition Checked | Severity |
+| :--- | :--- | :--- |
+| **`MISSING_SYNCHRONIZER`** | Signal crossing between unrelated clock domains without synchronization | Critical |
+| **`MULTI_BIT_BUS_CDC`** | Multi-bit bus crossing domains without Gray coding, FIFO, or handshake | Critical / Warning |
+| **`COMBO_BEFORE_SYNC`** | Combinational logic placed between launch flop and synchronizer chain | Critical |
+| **`ASYNC_RESET_CROSSING`** | **Reset Domain Crossing (RDC)** asynchronous reset hazard across domains | Critical / Warning |
+| **`SAFE_2FF_SYNC`** | Verified multi-stage synchronizer chain detected | Safe |
+
+---
+
+## 4. Root-Cause Guidance, Cross-Probing & Persistent Waivers
+
+- **Code Cross-Probing**: Click any crossing row to view the full launch-to-capture path, structural explanation, RTL fix guidance, and jump straight to the **source** or **destination** flop line in Monaco.
+- **Persistent Project Waivers**: Waive known static configuration signals or approved clock pairs cleanly (`siliflow:cdcWaivers:<scope>`), persisted per project across restarts.
+

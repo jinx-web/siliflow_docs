@@ -1,60 +1,30 @@
 # RTL Schematic Visualizer
 
-Visualizing hardware connections as gate-level schematics is essential for verifying synthesizer elaboration, debugging logic loops, and inspecting interconnects.
+Inspect elaborated hardware structure without leaving SiliFlow. The built-in **RTL Schematic Visualizer** pairs **Yosys** logic synthesis (with automatic `sv2v` preprocessing for SystemVerilog) and **`netlistsvg`** directly inside an editor tab.
 
-Siliflow includes a built-in **RTL Schematic Visualizer** powered by **Yosys** logic synthesis and **netlistsvg**.
+{/* SCREENSHOT_SLOT: docs-rtl-schematic.png — Gate-level Yosys + netlistsvg schematic canvas with Cell Inspector and resource stats */}
 
 ---
 
 ## 1. Opening the Schematic
 
-You can open the schematic view anytime:
-- Click the **Schematic** button in the top right of the editor tab bar.
-- Or click the **Schematic** pill in the top header.
-- Or right-click any Verilog file in the Explorer and choose **View RTL Schematic**.
+- Click **Schematic** in the top-right Action Island (or `Alt+Click` to dock it in the side split pane beside RTL code).
+- Press <kbd>Ctrl+Shift+S</kbd>.
+- Or select **Run → Open RTL Schematic**.
 
 ---
 
-## 2. Interactive Schematic Canvas
+## 2. Canvas Controls & Multi-Module Switching
 
-The schematic canvas gives you full interactive control:
-
-- **Pan & Zoom**:
-  - Click and drag anywhere to pan the netlist canvas.
-  - Scroll mouse wheel to smoothly zoom in and out.
-  - Quick zoom buttons: Zoom In, Zoom Out, and Reset Zoom (100%).
-- **Fit Diagram to View**:
-  - Click the **Fit Diagram** button (`Crosshair` icon) to automatically scale and center the entire netlist within your screen bounds without clipping.
-- **True Fullscreen Mode**:
-  - Click the **Fullscreen** button (`Maximize2` icon) to expand the schematic viewer over the entire application window.
-  - Press <kbd>Esc</kbd> anytime to exit fullscreen.
+- **Zoom & Pan**: Drag anywhere to pan across the netlist, scroll to zoom smoothly, or click **Zoom In**, **Zoom Out**, and **Fit to Screen**.
+- **Fullscreen View**: Toggle Fullscreen mode to inspect large multi-stage datapaths edge-to-edge (<kbd>Esc</kbd> exits).
+- **Module Selector**: Switch cleanly between top-level and instantiated sub-modules in multi-module designs.
 
 ---
 
-## 3. Cell & Signal Inspector
+## 3. Cell Inspector, Resource Telemetry & Cross-Probing
 
-- **Click any Gate or Port**:
-  Clicking on any logic gate, multiplexer, D flip-flop, or port highlights the cell in yellow and opens the **Cell Inspector** sidebar.
-- **Port Connections**:
-  Shows pin connections and bit vector mappings (e.g. `clk [2]`, `D [7]`, `Q [6]`).
-- **Jump to RTL Source**:
-  Click the **Jump to Source Code** button in the inspector to instantly open the Verilog file and highlight the exact line that generated that logic gate!
-- **Interactive Wire Highlighting**:
-  Hovering your cursor over any interconnect line highlights the entire net in glowing blue across all connected pins.
-
----
-
-## 4. Multi-Module Selector
-
-If your Verilog file contains multiple modules (e.g. top module, ALU, sub-counter), the clean module dropdown on the left of the toolbar lets you switch between schematics instantly without re-synthesizing.
-
----
-
-## 5. Exporting High-Resolution Diagrams
-
-Need to include your RTL schematic in a lab report, research paper, or presentation?
-
-Click the **Download** dropdown button on the toolbar:
-1. **Download SVG**: Exports a vector graphic `.svg` file that scales infinitely without pixelation.
-2. **Download PNG**: Renders the schematic on a 2x high-resolution canvas with a dark background and saves a crisp `.png` image.
-
+- **Cell & Port Inspector**: Click any logic gate, DFF, MUX, or I/O port on the schematic to inspect cell type, parameters, connections, and attributes.
+- **Yosys Resource Statistics (`parseYosysStats`)**: View wire count, wire bits, port count, port bits, total cells, and exact primitive breakdown synthesized by Yosys.
+- **Source Cross-Probing (`\src`)**: SiliFlow parses Yosys `\src` location attributes (`file:line`) so clicking synthesized cells jumps straight to the originating line in your Verilog/SystemVerilog code pane.
+- **Export `.svg`**: Download crisp standalone vector **SVG** netlist diagrams for lab reports, papers, and architecture docs.

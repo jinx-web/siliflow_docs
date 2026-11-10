@@ -1,56 +1,59 @@
-# Smart RTL Code Editor
+# Smart RTL Code Editor & Split Window
 
-Siliflow incorporates a tailored **Monaco-based editor** tuned specifically for Verilog (IEEE 1364) and SystemVerilog (IEEE 1800-2017).
+SiliFlow builds on a custom-themed **Monaco Studio (`siliflow-dark`)** tailored for **Verilog-2001 (IEEE 1364)** and **SystemVerilog (IEEE 1800-2017)** (`logic`, `always_ff`, `always_comb`, `always_latch`, `interface`, `modport`, `typedef`, `enum`, `struct`, `package`, `import`, `generate`).
 
----
-
-## 1. Smarter Navigation: Go to Definition (<kbd>F12</kbd>)
-
-Hardware projects often consist of dozens of interconnected modules and signals. You no longer have to manually search for declarations.
-
-- Press <kbd>F12</kbd> (or <kbd>Ctrl+Click</kbd> / Right-click → **Go to Definition**) on any:
-  - Submodule instantiation (e.g. `alu u_alu (...)`) to jump directly to the target `module alu (...)` definition.
-  - Wire, reg, or logic signal to jump to its declaration.
-  - Parameter or localparam to jump to its value assignment.
-- Works across both the current file and across all files in your open project workspace.
+{/* SCREENSHOT_SLOT: docs-split-editor.png — Dual-pane vertical split editor showing RTL alongside testbench or side visualizer */}
 
 ---
 
-## 2. Signal Autocomplete & IntelliSense
+## 1. Dual-Pane Split Window (`Ctrl+\`)
 
-As you type, Siliflow automatically scans your active module, port lists, and declared nets:
+Inspect RTL, testbenches, interfaces, or visualizers side by side without switching tabs:
 
-- **Signal Suggestions**: Automatically suggests port names, wire declarations, and registers.
-- **Port Direction Metadata**: Displays port direction (`input`, `output`, `inout`) and bitwidth (e.g., `[7:0]`, `[31:0]`).
-- **Snippet Generators**:
-  - `mod` → Automatically generates a complete module skeleton.
-  - `ff` → Generates standard synchronous flip-flop `always @(posedge clk)` blocks.
-  - `comb` → Generates combinational `always @(*)` logic.
-  - `tb` → Generates a complete testbench scaffold with clock generator and `$dumpfile`.
-
----
-
-## 3. Signal Hover Cards
-
-Hovering your mouse over any signal or instance displays a rich hover preview card:
-- Exact declaration line and source file.
-- Signal type (`wire`, `reg`, `logic`, `parameter`).
-- Bit vector width (e.g. `[15:0]`).
+- **Horizontal & Vertical Split**: Open **Split Right** (<kbd>Ctrl+\\</kbd>) or **Split Down** via **View → Editor Layout**, or flip between Side-by-Side / Top-Bottom layouts anytime.
+- **Open Visualizers to the Side (`Alt+Click`)**: Hold `Alt` while clicking **Waveform**, **FSM**, or **Schematic** in the top Action Island to dock the visualizer directly into the secondary pane.
+- **Resizable Split Divider**: Drag the center divider smoothly (`20%`–`80%` clamped, saved per layout) or **double-click the divider** to reset to `50 / 50`.
+- **Focused Pane Isolation**: Focus either pane by clicking or pressing <kbd>Ctrl+1</kbd> / <kbd>Ctrl+2</kbd>. Edit actions (`Ctrl+S`, `Ctrl+W`, Find/Replace, Comment, `Ln/Col` telemetry) target the focused pane cleanly.
+- **Cross-Pane Drag & Drop**: Drag tabs to reorder or move across panes with automatic deduplication, synchronized shared file buffers, safe dirty-buffer checks, and automatic single-pane collapse when the secondary pane empties.
+- **Code-Aware Cross-Probing**: Jumping from Problems, Search, Module Hierarchy, Schematic, STA, or CDC automatically focuses a code pane so open Waveform/FSM/Schematic views remain undisturbed.
 
 ---
 
-## 4. Live Linting & Problems Panel
+## 2. Workspace Symbol Index & `F12` Go to Definition
 
-Siliflow runs real-time background syntax checking:
-- Errors and warnings appear with red and yellow squigglies directly under the offending code lines.
-- The **Problems** tab in the bottom panel lists all workspace diagnostics sorted by severity, tool (`iverilog` / `verilator`), and file location.
-- Clicking any problem line instantly navigates your editor cursor to that exact line and column.
+SiliFlow's background `VerilogWorkspaceIndex` indexes all `.v` and `.sv` files across your project—including unopened files:
+
+- **Go to Definition (<kbd>F12</kbd> / `Ctrl+Click`)**: Jump across files to `module`, `port`, `wire`, `reg`, `param`, `task`, `instance`, `interface`, `package`, `typedef`, and `class` declarations.
+- **Intelligent Autocomplete (<kbd>Ctrl+Space</kbd>)**: Suggests workspace HDL symbols, ports/parameters with widths and directions, and relative paths inside `` `include "..." `` directives.
+- **Hover Telemetry**: Hover over any identifier to inspect signal declaration type, bit vector width, and source file location.
+- **Built-In ViewState Cache**: Cursor position, selections, and scroll offsets stay preserved across tab switches.
 
 ---
 
-## 5. Editor Productivity Features
+## 3. `350ms` Merged Live Linting & STA Overlays
 
-- **Middle-Click Scroll Mouse Tab Close**: Quickly close tabs by clicking your mouse wheel on any tab.
-- **Auto-Formatting**: Re-align port lists and indentations.
-- **Instant Search Across Files** (<kbd>Ctrl+Shift+F</kbd>): Search any signal, regex, or macro across every file in the project with case-matching and whole-word filters.
+Every edit triggers a debounced **`350ms` background lint pass** combining diagnostics from:
+- **Icarus Verilog (`iverilog`)**
+- **Verilator (`verilator`)**
+- **Slang (`slang`)** (IEEE 1800 SystemVerilog structural diagnostics)
 
+Syntax errors and warnings appear immediately as inline red/yellow squigglies and feed the bottom **Problems** tab (<kbd>Ctrl+Shift+M</kbd>) without clobbering diagnostics from other files.
+
+When Static Timing Analysis runs, SiliFlow also displays **inline glowing critical-path line markers** and **path-hop hover tooltips** directly in Monaco and flashes target lines when clicked from the STA panel.
+
+---
+
+## 4. Built-In HDL Code Scaffolds (`Tools → RTL Code Generators`)
+
+Right-click any Verilog/SystemVerilog file in the Explorer or open **Tools → RTL Code Generators** to scaffold:
+
+- **Copy Module Instantiation**: Extracts parameters and ports to generate `module_name #(...) u_inst (...);`.
+- **Generate Verilog Testbench (`.v`)** or **SystemVerilog Testbench (`.sv`)**: Scaffolds clock/reset generation, `$dumpfile`, DUT port bindings, and `$finish`.
+- **Generate SystemVerilog Interface (`.sv`)**: Emits parameterized `interface` boilerplate with `master` and `slave` `modport`s.
+- **New From Template** (**File → New From Template**): SystemVerilog Module, Verilog Testbench, SystemVerilog Testbench, SystemVerilog Interface, or `project.json`.
+
+---
+
+## 5. Editor Settings & Shortcuts
+
+Customize ergonomics in **Settings (<kbd>Ctrl+,</kbd>)**: Font size (`8–32px`, default `13px`), Tab width (`2`/`4`/`8`), Spaces vs. Tabs, Minimap toggle, and Word Wrap (<kbd>Alt+Z</kbd>). Zoom quickly using <kbd>Ctrl+=</kbd>, <kbd>Ctrl+-</kbd>, and <kbd>Ctrl+0</kbd>, search workspace-wide with <kbd>Ctrl+Shift+F</kbd>, or middle-click any tab (press and release) to close it.

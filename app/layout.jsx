@@ -1,23 +1,34 @@
+import { Inter, Instrument_Serif } from 'next/font/google'
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
+import './docs-trace.css'
+import { BackHomeLink } from './back-home-link'
+import { SteppedTraceEnhancer } from './stepped-trace'
+
+const inter = Inter({ subsets: ['latin'] })
+const instrument = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+})
 
 export const metadata = {
-  metadataBase: new URL('https://www.siliflow.in'),
+  metadataBase: new URL('https://siliflow.in'),
   title: {
     template: '%s - SiliFlow Studio Docs',
-    default: 'SiliFlow Studio Documentation'
+    default: 'SiliFlow Studio v1.2 Documentation'
   },
-  description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.',
+  description: 'Official documentation for SiliFlow Studio v1.2: Verilog/SystemVerilog IDE, dual simulation, wellen waveforms, Yosys synthesis, STA, CDC/RDC, and register maps.',
   alternates: {
     canonical: '/docs',
   },
   openGraph: {
     type: 'website',
-    url: 'https://www.siliflow.in/docs',
-    title: 'SiliFlow Studio Documentation',
-    description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.',
+    url: 'https://siliflow.in/docs',
+    title: 'SiliFlow Studio v1.2 Documentation',
+    description: 'Official documentation for SiliFlow Studio v1.2: Verilog/SystemVerilog IDE, dual simulation, wellen waveforms, Yosys synthesis, STA, CDC/RDC, and register maps.',
     siteName: 'SiliFlow',
     images: [
       {
@@ -30,8 +41,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'SiliFlow Studio Documentation',
-    description: 'Official documentation for SiliFlow Studio: Modern Verilog/SystemVerilog IDE, instant F5 simulation, and interactive embedded waveform viewer.',
+    title: 'SiliFlow Studio v1.2 Documentation',
+    description: 'Official documentation for SiliFlow Studio v1.2: Verilog/SystemVerilog IDE, dual simulation, wellen waveforms, Yosys synthesis, STA, CDC/RDC, and register maps.',
     images: ['/docs/logo.png'],
   },
   icons: {
@@ -46,27 +57,51 @@ export const metadata = {
 const navbar = (
   <Navbar
     logo={
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', fontWeight: 800, letterSpacing: '-0.02em', fontSize: '1.05rem' }}>
-        <img
-          src="/docs/logo.png"
-          alt="SiliFlow logo"
-          width={24}
-          height={24}
-          style={{ borderRadius: '5px', objectFit: 'contain' }}
-        />
-        <span>SILIFLOW <span style={{ opacity: 0.65, fontWeight: 500, fontSize: '0.95rem' }}>DOCS</span></span>
-      </span>
+        <span
+          className={inter.className}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '10px',
+            fontWeight: 600,
+            letterSpacing: '-0.025em',
+            fontSize: '17px',
+          }}
+        >
+          <img
+            src="/docs/logo.webp"
+            alt="SiliFlow logo"
+            width={24}
+            height={24}
+            style={{ objectFit: 'contain' }}
+          />
+          <span>
+            SILI
+            <em
+              className={instrument.className}
+              style={{ fontStyle: 'italic', fontWeight: 400 }}
+            >
+              flow
+            </em>
+            {' '}
+            <span style={{ opacity: 0.6, fontWeight: 500, fontSize: '0.82rem', letterSpacing: '0.04em' }}>
+              DOCS
+            </span>
+          </span>
+        </span>
     }
-    projectLink="https://github.com/jinx-web/siliflow_docs"
-  />
+        projectLink="https://github.com/jinx-web/siliflow_docs"
+  >
+        <BackHomeLink />
+      </Navbar>
 )
 
 const footer = (
   <Footer>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', fontSize: '0.85rem', opacity: 0.85 }}>
       <span>© {new Date().getFullYear()} SiliFlow Technologies. Built for silicon engineers & students.</span>
-      <a href="https://www.siliflow.in" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline', color: 'inherit' }}>
-        siliflow.in ↗
+      <a href="/" style={{ textDecoration: 'underline', color: 'inherit' }}>
+        ← Back to siliflow.in
       </a>
     </div>
   </Footer>
@@ -83,6 +118,7 @@ export default async function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/docs/apple-icon.png" />
       </Head>
       <body>
+        <SteppedTraceEnhancer />
         <Layout
           navbar={navbar}
           pageMap={pageMap}

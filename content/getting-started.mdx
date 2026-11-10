@@ -1,94 +1,85 @@
 # Getting Started & Workspaces
 
-Siliflow is designed to feel familiar to anyone who has used VS Code, but purpose-built with silicon engineering workflows at its core.
+SiliFlow Studio adopts familiar desktop IDE ergonomics while keeping hardware project workflows—testbench discovery, dual-pane simulation, STA timing, CDC checks, and schematics—one click away.
+
+{/* SCREENSHOT_SLOT: docs-welcome-examples.png — Welcome Screen with Built-in Demo Project and 8 Examples Gallery */}
 
 ---
 
-## 1. Opening a Workspace
+## 1. Opening or Creating a Workspace
 
-When you launch Siliflow, you are welcomed by the onboarding screen:
+When SiliFlow launches (`900×600` minimum, `1400×900` default maximized), you can start immediately via:
 
-- **Open Folder**: Select any local directory containing Verilog (`.v`), SystemVerilog (`.sv`, `.svh`), or header (`.vh`) files.
-- **Try Demo Project**: One-click onboarding button on the Welcome screen or Explorer sidebar. It instantly loads the included `demo_project` containing a 4-bit synchronous counter, full testbench, and preconfigured simulation scripts.
-- **Clone from URL**: Clone any Git hardware repository (e.g., from GitHub or GitLab) directly into your workspace.
-- **Recent Workspaces**: Instantly re-open your most recent projects from the quick-access list.
+- **Open Folder**: Load any local directory of `.v`, `.sv`, `.svh`, or `.vh` files (**File → Open Folder...**).
+- **Open Built-in Demo Project**: Loads the bundled Half-Adder starter workspace immediately from **Tools → Open Built-in Demo Project** or the Welcome screen.
+- **8 Built-in Interactive Examples**: Launch curated virtual sandbox labs cleanly without creating files on disk first via **File → Built-in Examples** or **Help → Browse Examples Gallery**:
+  1. *Combinational:* **Half Adder** (`half_adder.v` + `half_adder_tb.v`)
+  2. *Combinational:* **4-Bit Arithmetic Logic Unit (ALU)** (`alu_4bit.v` + `alu_4bit_tb.v`)
+  3. *Sequential:* **8-Bit Up/Down Counter with Reset** (`counter_8bit.v` + `counter_8bit_tb.v`)
+  4. *State Machines:* **UART Transmitter FSM** (`uart_tx.v` + `uart_tx_tb.v`)
+  5. *State Machines:* **Traffic Light Controller** (`traffic_light.v` + `traffic_light_tb.v`)
+  6. *Bus Peripherals:* **ARM APB3 Memory-Mapped GPIO Slave** (`apb_gpio.v` + `apb_gpio_tb.v`)
+  7. *Advanced SoC:* **RISC-V RV32I Single-Cycle Mini-Core** (`riscv_mini.v` + `riscv_mini_tb.v`)
+  8. *Advanced SoC:* **Dual-Clock CDC & RDC Lab** (`cdc_demo.v` + `cdc_demo_tb.v`)
+- **Clone Repository...** (<kbd>Ctrl+Shift+V</kbd>): Clone Git repositories directly into a local workspace folder.
+- **Recent Workspaces**: Re-open up to **15** recent workspace folders (**File → Open Recent**).
 
 ---
 
-## 2. Workspace Project Structure (`project.json`)
+## 2. Project Configuration (`project.json`)
 
-Siliflow works seamlessly with raw Verilog files, but you can also define a `project.json` in your workspace root for advanced build automation:
+SiliFlow auto-discovers RTL and testbench files automatically (detecting `sim/`, `tb/`, `test/`, `tests/` directories and `_tb`, `_test`, `_bench`, `tb_`, `test_` naming). For complex builds or custom PDK settings, edit `project.json` via **Tools → Edit `project.json` Configuration** or create one via **File → New From Template**:
 
 ```json
 {
-  "name": "counter_project",
-  "topModule": "counter_tb",
+  "name": "spi_packet_engine",
+  "topModule": "spi_packet_engine",
   "sourceFiles": [
-    "src/counter.v",
-    "sim/counter_tb.v"
+    "rtl/spi_packet_engine.sv",
+    "tb/spi_packet_engine_tb.sv"
   ],
-  "includeDirs": [
-    "include"
-  ],
-  "defines": [
-    "DEBUG_MODE"
-  ],
+  "includeDirs": ["include"],
+  "defines": ["SIMULATION"],
   "testbenches": [
     {
-      "name": "counter_tb",
-      "file": "sim/counter_tb.v",
-      "simulator": "iverilog"
-    },
-    {
-      "name": "fast_counter_tb",
-      "file": "sim/counter_tb.v",
-      "simulator": "verilator"
+      "name": "spi_packet_engine_tb",
+      "target": "tb/spi_packet_engine_tb.sv",
+      "simulator": "iverilog",
+      "waveformDump": "waveform.vcd"
     }
-  ]
+  ],
+  "flow": {
+    "targetPDK": "45nm",
+    "clockPeriodNs": 10
+  }
 }
 ```
 
-### Configuration Fields
-
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `name` | `string` | Display name of the silicon project |
-| `topModule` | `string` | Primary default root module |
-| `sourceFiles` | `string[]` | Ordered list of source RTL and testbench files |
-| `includeDirs` | `string[]` | Directory paths passed via `-I` to simulators |
-| `defines` | `string[]` | Macro definitions passed via `-D` to compilers |
-| `testbenches` | `array` | Dedicated list of testbench targets with engine presets |
+| `name` | `string` | Workspace display name |
+| `topModule` | `string` | Default root module for synthesis, STA, and CDC/RDC |
+| `sourceFiles` | `string[]` | Ordered list of RTL and testbench files |
+| `includeDirs` | `string[]` | Include search directories (`-I`) |
+| `defines` | `string[]` | Preprocessor macros (`-D`) |
+| `testbenches` | `array` | Explicit testbench targets with `target`, `simulator`, and `waveformDump` |
+| `flow` | `object` | Default signoff settings (`targetPDK`, `clockPeriodNs`) |
 
 ---
 
-## 3. UI Overview & Layout
+## 3. Studio UI Zones & Persistent State
 
-Siliflow is divided into 5 focused functional zones:
+SiliFlow remembers your open tabs, split layout ratio (`0.2–0.8`), active Activity Bar view, sidebar/bottom panel sizes, settings, and CDC waivers per workspace:
 
-1. **Title Bar**:
-   - Quick file switcher & Command Palette (<kbd>Ctrl+P</kbd>).
-   - Global **Save** (<kbd>Ctrl+S</kbd>).
-   - Quick **Simulate** action button.
-   - **Waveform** and **Schematic** toggle buttons.
-2. **Activity Bar** (Far Left):
-   - **Explorer**: File management, new file/folder, drag-and-drop.
-   - **Search Across Files** (<kbd>Ctrl+Shift+F</kbd>): Regex, case-sensitive search.
-   - **Module Hierarchy Tree**: Real-time instantiated RTL tree.
-   - **Source Control**: Git branch, commit, stage, discard, and diff viewer.
-3. **Editor Area**:
-   - Multi-tab Monaco code editor.
-   - Middle-click tab close support.
-   - Split view and watermark empty state.
-4. **Bottom Panel**:
-   - **Problems**: Live syntax, parser, and lint diagnostics.
-   - **Output**: Detailed compilation logs.
-   - **Terminal**: Embedded interactive silicon terminal.
-   - **Waveform**: Embedded interactive VCD waveform canvas.
-   - **Run History**: Historical record of compilation times, passes, and fails.
-   - **Regression**: Pass/fail table for automated test suite execution.
-5. **Status Bar** (Bottom):
-   - Active Git branch.
-   - Problems counter.
-   - Active terminal toggle.
-   - EDA Toolchain status pill.
-   - Cursor position (Line / Column), encoding, and active language mode.
+1. **Title Bar**: File, Edit, Run, View, Tools, Help menus; Quick Open (<kbd>Ctrl+P</kbd>); Action Island (**Save**, **Simulate**, **Waveform**, **FSM**, **Schematic** — hold `Alt+Click` on a visualizer to open side-by-side).
+2. **Activity Bar** (Left):
+   - **Explorer** (<kbd>Ctrl+Shift+E</kbd>)
+   - **Search Across Files** (<kbd>Ctrl+Shift+F</kbd>)
+   - **Module Hierarchy** (<kbd>Ctrl+Shift+H</kbd>)
+   - **Source Control (Git)** (<kbd>Ctrl+Shift+G</kbd>, shows dirty badge)
+   - **Run & Simulation**
+   - **Visual Register Map & CSR Codegen**
+   - **Settings** (<kbd>Ctrl+,</kbd>)
+3. **Dual-Pane Editor Area**: Multi-tab Monaco HDL editor + embedded visualizers (`Waveform`, `Schematic`, `FSM`, `Register Map`, `Diff`, `Git Graph`, and `Image Asset Viewer` for `.png`/`.svg`/`.webp`).
+4. **Bottom Panel (8 Tabs)**: **Problems**, **Output**, **Terminal**, **Waveform**, **Run History**, **Regression**, **Timing (STA)**, and **CDC / RDC**.
+5. **Status Bar**: Workspace name, Problems error/warning counts, Terminal toggle, Git branch + ahead/behind count, Toolchain status pill, last Simulation verdict (`Passed`/`Failed` + `ms`), Cursor `Ln/Col`, Spaces/Tab width, `UTF-8`, and active Language mode.

@@ -1,0 +1,103 @@
+/* ─── SiliFlow Docs: Stepped PCB-Trace Sidebar & TOC Theme ───────────────── */
+
+:root {
+  --trace-node-bg: #ffffff;
+  --trace-stroke-muted: rgba(82, 82, 91, 0.35);
+  --trace-stroke-active: rgba(24, 24, 27, 0.78);
+  --trace-cursor: #18181b;
+  --trace-active-text: #09090b;
+}
+
+html.dark {
+  --trace-node-bg: #111111;
+  --trace-stroke-muted: rgba(161, 161, 170, 0.32);
+  --trace-stroke-active: rgba(244, 244, 245, 0.85);
+  --trace-cursor: #f4f4f5;
+  --trace-active-text: #f7f8f8;
+}
+
+/* Give Left Sidebar room on left edge for the stepped trace + nodes */
+.nextra-sidebar .nextra-scrollbar > ul {
+  position: relative;
+  gap: 2px !important;
+}
+
+/* Separator milestones (Depth 0 -> aligned at left trace column) */
+.nextra-sidebar .nextra-scrollbar > ul > li:not(:has(> a)):not(:has(> button)) {
+  padding-left: 26px !important;
+  padding-right: 8px !important;
+  margin-top: 14px !important;
+  margin-bottom: 2px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Top-level intro link before any separator (Depth 0 -> left column) */
+.nextra-sidebar .nextra-scrollbar > ul > li:first-child > a {
+  padding-left: 26px !important;
+}
+
+/* Doc items nested visually after separators (Depth 1 -> stepped right) */
+.nextra-sidebar .nextra-scrollbar > ul > li:not(:first-child) > a {
+  padding-left: 38px !important;
+}
+
+.nextra-sidebar .nextra-scrollbar li > a {
+  border-radius: 6px;
+  font-size: 13px !important;
+  line-height: 1.4;
+}
+
+/* Clean crisp active page styling without heavy bright box */
+.nextra-sidebar li.active > a {
+  background: rgba(128, 128, 128, 0.08) !important;
+  color: var(--trace-active-text) !important;
+  font-weight: 600 !important;
+}
+
+html.dark .nextra-sidebar li.active > a {
+  background: rgba(255, 255, 255, 0.055) !important;
+}
+
+/* Right TOC ("On This Page") stepped hierarchy matching same PCB trace lane */
+.nextra-toc ul.nextra-scrollbar {
+  padding-left: 10px !important;
+}
+
+.nextra-toc ul.nextra-scrollbar li {
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+}
+
+.nextra-toc ul.nextra-scrollbar li > a {
+  display: block;
+  padding-left: 22px !important;
+  margin-inline-start: 0 !important;
+  font-size: 13px !important;
+}
+
+/* Depth 3 / 4 / 5 stepped inward cleanly for diagonal SVG traces */
+.nextra-toc ul.nextra-scrollbar li > a[class*="x:ms-3"] {
+  padding-left: 34px !important;
+}
+
+.nextra-toc ul.nextra-scrollbar li > a[class*="x:ms-6"] {
+  padding-left: 46px !important;
+}
+
+.nextra-toc ul.nextra-scrollbar li > a[class*="x:ms-9"] {
+  padding-left: 58px !important;
+}
+
+.nextra-toc a[class*="text-primary-600"] {
+  color: var(--trace-active-text) !important;
+  font-weight: 600 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .siliflow-trace-cursor {
+    transition: none !important;
+  }
+}
+

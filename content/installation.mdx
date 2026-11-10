@@ -1,89 +1,91 @@
 # Installation & Toolchains
 
-Siliflow is distributed as a lightweight, native cross-platform application. Thanks to its native Rust and OS webview architecture, the entire installer is **under 10 MB** (vs 150+ MB for Electron apps) and installs in seconds.
+SiliFlow Desktop Studio (`v1.2.0`) is distributed as a lightweight native **Tauri v2** application. Thanks to its compiled Rust backend and OS WebView frontend, the installer is **under 10 MB** and launches directly without JVM runtimes or license daemons.
 
 ---
 
-## 1. Downloading Siliflow
+## 1. Downloading SiliFlow Studio (`v1.2.0`)
 
-Official releases are published directly on our public releases portal:
-👉 **[https://github.com/jinx-web/siliflow-releases/releases/latest](https://github.com/jinx-web/siliflow-releases/releases/latest)**
+Official installers are published on the public SiliFlow releases portal:
+
+- **Latest Releases:** [https://github.com/jinx-web/siliflow-releases/releases/latest](https://github.com/jinx-web/siliflow-releases/releases/latest)
+- **Website Quickstart:** <a href="/quickstart">siliflow.in/quickstart</a>
 
 ### Operating System Packages
 
-| Operating System | Architecture | Package Format | Download File | Notes |
+| Operating System | Architecture | Package Format | Recommended Package | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **Windows** | x64 (64-bit) | `.exe` / `.msi` | `Siliflow_1.1.0_x64-setup.exe`<br/>`Siliflow_1.1.0_x64_en-US.msi` | Windows 10 & 11 compatible |
-| **macOS** | Apple Silicon (M1/M2/M3/M4) | `.dmg` | `Siliflow_1.1.0_aarch64.dmg` | macOS 12 Monterey or newer |
-| **Linux** | x86_64 (64-bit) | `.AppImage` / `.deb` | `Siliflow_1.1.0_amd64.AppImage`<br/>`Siliflow_1.1.0_amd64.deb` | Ubuntu, Debian, Fedora, Arch |
+| **Windows** | x64 (64-bit) | `.exe` / `.msi` | `Siliflow_1.2.0_x64-setup.exe` / `.msi` | Windows 10 & 11 |
+| **macOS** | Apple Silicon (M1–M4) | `.dmg` | `Siliflow_1.2.0_aarch64.dmg` | macOS 12 Monterey or newer |
+| **Linux** | x86_64 (64-bit) | `.AppImage` / `.deb` | `Siliflow_1.2.0_amd64.AppImage` / `.deb` | Ubuntu, Debian, Fedora, Arch |
 
 ---
 
-## 2. Installation Steps
+## 2. OS Installation Steps
 
-### Windows Installation
-1. Download `Siliflow_1.1.0_x64-setup.exe` or `Siliflow_1.1.0_x64_en-US.msi`.
-2. Double-click to launch the installer.
-3. Follow the wizard. Siliflow will create a Desktop shortcut and Start Menu entry.
-4. Launch **Siliflow**.
+### Windows
+1. Download `Siliflow_1.2.0_x64-setup.exe` or `Siliflow_1.2.0_x64_en-US.msi`.
+2. Run the setup wizard to create Desktop and Start Menu shortcuts.
+3. Launch **SiliFlow**. On first launch, Windows can download SiliFlow's isolated managed toolchain with **SHA-256 verification** directly into `%LOCALAPPDATA%\Siliflow\tools`.
 
-### macOS Installation
-1. Download `Siliflow_1.1.0_aarch64.dmg`.
-2. Double-click the `.dmg` file to mount it.
-3. Drag the **Siliflow** icon into your **Applications** folder.
-4. Launch Siliflow from Spotlight or Launchpad. *(On first launch, if macOS Gatekeeper prompts an unverified developer dialog, right-click `Siliflow.app` in Finder and select **Open**).*
+### macOS
+1. Download `Siliflow_1.2.0_aarch64.dmg`.
+2. Open the disk image and drag **Siliflow** into **Applications**.
+3. On first launch, if macOS Gatekeeper warns about an unsigned beta build, right-click `Siliflow.app` in Finder and click **Open**.
 
-### Linux Installation
+### Linux
 
-#### Option A: Universal AppImage (Runs on all distributions)
 ```bash
-# Make the AppImage executable
-chmod +x Siliflow_1.1.0_amd64.AppImage
+# Option A: Universal AppImage
+chmod +x Siliflow_1.2.0_amd64.AppImage
+./Siliflow_1.2.0_amd64.AppImage
 
-# Run Siliflow directly
-./Siliflow_1.1.0_amd64.AppImage
-```
-
-#### Option B: Debian / Ubuntu (`.deb`)
-```bash
-sudo dpkg -i Siliflow_1.1.0_amd64.deb
-# If there are missing system libraries:
+# Option B: Debian / Ubuntu (.deb)
+sudo dpkg -i Siliflow_1.2.0_amd64.deb
 sudo apt-get install -f
 ```
 
 ---
 
-## 3. EDA Hardware Toolchains
+## 3. Managed & Detected EDA Toolchains (`8` Binaries)
 
-Siliflow orchestrates industry-standard open-source silicon tools. While the editor, file tree, hierarchy viewer, and search work out of the box, simulation and schematic visualization interface with the following tools:
+The Rust Toolchain Scanner checks SiliFlow's isolated managed folder first (`%LOCALAPPDATA%\Siliflow\tools` on Windows, `~/.siliflow/tools` on macOS/Linux) before falling back to MSYS2, OSS CAD Suite, and your system `PATH`.
 
-| Tool | Purpose | Status |
+| Binary | Role in SiliFlow Studio | Status |
 | :--- | :--- | :--- |
-| **Icarus Verilog** (`iverilog` + `vvp`) | Fast event-driven simulation & testbench execution | **Recommended** |
-| **Verilator** (`verilator_bin` or `verilator`) | Cycle-accurate 10x–100x high-speed simulation & linting | **Recommended** |
-| **Yosys** (`yosys`) | Logic synthesis & interactive RTL schematic elaboration | **Recommended** |
-| **GTKWave** | Optional external standalone waveform viewing | Optional |
+| **Icarus Verilog** (`iverilog` + `vvp`) | Event-driven Verilog simulation & fast lint diagnostics | Core Simulation |
+| **Verilator** (`verilator` / `verilator_bin`) | High-speed C++ / SystemVerilog compilation & lint verification | Core Simulation |
+| **Yosys** (`yosys`) | Synthesis elaboration for Schematics, STA timing & CDC/RDC analysis | Synthesis & Signoff |
+| **sv2v** (`sv2v`) | Automatic SystemVerilog-to-Verilog-2005 transpilation fallback | SV Compatibility |
+| **Slang** (`slang`) | Deep IEEE 1800 SystemVerilog parser & real-time lint squiggles | SV Diagnostics |
+| **Verible** (`verible-verilog-*`) | Style linting & formatting checks | Code Quality |
+| **GTKWave** (`gtkwave`) | Optional external standalone waveform viewer launcher | Optional Handoff |
 
-### Installing Toolchains on Windows
+{/* SCREENSHOT_SLOT: docs-toolchain-modal.png — Toolchain Manager Modal displaying detected paths and versions */}
 
-The easiest method to get all silicon tools on Windows is via **MSYS2 / UCRT64** or the **OSS CAD Suite**:
+---
 
-#### Using MSYS2:
-Open an MSYS2 UCRT64 terminal and run:
+## 4. Platform Toolchain Setup Commands
+
+### Windows (MSYS2 UCRT64 or One-Click Managed Install)
+
+Inside SiliFlow, open **Tools → EDA Toolchain Manager** to run the **SHA-256-verified managed Windows installer** automatically, or install the full open-source suite via MSYS2 UCRT64:
+
 ```bash
 pacman -S mingw-w64-ucrt-x86_64-iverilog \
           mingw-w64-ucrt-x86_64-verilator \
           mingw-w64-ucrt-x86_64-yosys
 ```
-Add `C:\msys64\ucrt64\bin` to your Windows System `PATH`. Siliflow also automatically discovers standard MSYS2 and OSS CAD Suite installations!
 
-### Installing Toolchains on macOS (Homebrew)
+SiliFlow automatically searches `C:\msys64\ucrt64\bin`, `C:\msys64\mingw64\bin`, `C:\iverilog\bin`, and `C:\oss-cad-suite\bin` even if they are missing from your global Windows `PATH`.
+
+### macOS (Homebrew)
 
 ```bash
-brew install icarus-verilog verilator yosys
+brew install icarus-verilog verilator yosys sv2v slang
 ```
 
-### Installing Toolchains on Linux (Ubuntu / Debian)
+### Linux (Ubuntu / Debian)
 
 ```bash
 sudo apt update
@@ -92,12 +94,8 @@ sudo apt install -y iverilog verilator yosys gtkwave
 
 ---
 
-## 4. In-App Toolchain Status Verification
+## 5. In-App Toolchain Verification & Environment Info
 
-You never have to guess whether your environment is configured properly.
-
-1. Look at the bottom-right status bar in Siliflow:
-   * If all tools are found, it displays a green pill: `iverilog + vvp • Verilator • Yosys`.
-   * If any tool is missing, it displays an interactive yellow button: `Tools Missing`.
-2. Click the tool status button anytime to open the **Toolchain Manager Modal**. It checks binary paths, installed versions, and provides instant install commands.
-
+1. Check the bottom-right **Status Bar** indicator (`All Tools Ready` vs. `Tools Missing`).
+2. Click it anytime (or open **Tools → EDA Toolchain Manager**) to inspect binary paths, run **Auto-Detect / Reload Toolchain**, or trigger a one-click managed download.
+3. Click **Help → Copy Environment Info** to copy your OS, active simulator engine, and all detected binary paths directly to clipboard when filing bug reports.

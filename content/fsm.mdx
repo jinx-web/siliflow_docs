@@ -1,0 +1,32 @@
+# FSM State Machine Visualizer
+
+SiliFlow automatically parses finite state machines directly from your Verilog and SystemVerilog code—rendering interactive state diagrams and transition tables without manually maintaining Graphviz scripts.
+
+{/* SCREENSHOT_SLOT: docs-fsm-visualizer.png — Interactive FSM State Graph with state selection, transition labels, and Mermaid export */}
+
+---
+
+## 1. Opening the FSM Visualizer
+
+- Click **FSM** in the top-right Action Island (or `Alt+Click` **FSM** to dock it side-by-side in a split pane next to your source code).
+- Or select **Run → Open FSM Visualizer**.
+
+---
+
+## 2. Automatic HDL State & Transition Extraction
+
+`FsmViewer` extracts state machines written using:
+- SystemVerilog `typedef enum logic [...] { IDLE, START, SHIFT, DONE } state_t;`
+- Traditional Verilog `parameter` / `localparam` state encodings
+- Combinational or sequential `case` / `if` next-state transition logic
+
+---
+
+## 3. Graph Controls, Multi-FSM Selector & Mermaid Export
+
+- **Circular State Graph**: Renders states cleanly with reset/initial state highlighting and labeled guard conditions along directed arcs.
+- **Interactive State Selection**: Click any state node to highlight its incoming and outgoing transitions while inspecting the transition table.
+- **Multi-FSM Switcher**: Switch cleanly between multiple finite state machines detected across a multi-module project.
+- **Zoom & Pan**: Smooth zoom controls for larger control paths.
+- **One-Click Copy Mermaid (`stateDiagram-v2`)**: Copy valid **Mermaid `stateDiagram-v2`** syntax straight to your clipboard for lab reports, GitHub READMEs, and architecture specs.
+

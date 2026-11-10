@@ -1,58 +1,59 @@
-# Welcome to SiliFlow Studio
+# Welcome to SiliFlow Studio (`v1.2.0`)
 
-**SiliFlow Studio** is a unified, next-generation electronic design automation (EDA) workbench engineered specifically for modern silicon designers, verification engineers, and hardware students.
+**SiliFlow Studio** is a unified, local-first electronic design automation (EDA) desktop workbench built for digital hardware engineers, verification teams, and VLSI students.
 
-Traditional EDA software forces hardware engineers into fragmented, 1990s-era tooling: multi-gigabyte heavy installers, brittle external FlexLM license daemons, disjointed text editors, and external waveform viewing utilities like GTKWave that break flow every time you need to trace an assertion failure.
+Traditional EDA suites force hardware developers across disjointed GUIs, multi-gigabyte installers, brittle FLEXlm license servers, and external waveform popups. SiliFlow brings **RTL editing, split-pane navigation, multi-engine compilation & linting, `.vcd`/`.fst` waveform analysis, Yosys schematic elaboration, FSM visualization, Static Timing Analysis (STA), CDC/RDC signoff, visual register map codegen, Git history, and an integrated multi-shell terminal** together inside one native window.
 
-SiliFlow unifies the entire RTL lifecycle into an ultra-fast, single executable.
+{/* SCREENSHOT_SLOT: docs-hero-ide.png — Full SiliFlow Studio v1.2.0 main workspace (Explorer + Split Editor + Bottom Panel) */}
 
 ---
 
-## Key Highlights
+## Key Highlights (`v1.2.0`)
 
-- **⚡ Sub-Millisecond Iterations**: Hit `F5` to trigger real-time compilation, testbench execution, and waveform rendering in under **40 milliseconds**.
-- **📦 Single 45MB Binary**: Zero external daemon services, zero Java runtimes, zero complex license servers. Download, unpack, and launch.
-- **📈 Integrated Waveform Canvas**: High-DPI hardware-accelerated waveform viewer built directly beneath the code editor. No alt-tabbing or external trace files needed.
-- **🔍 Bi-Directional Cross-Probing**: Click any signal transition or assertion glitch in the waveform to jump directly to the exact driving line of Verilog/SystemVerilog RTL.
-- **🔌 Multi-Engine Simulation Pipeline**: Out-of-the-box support for Icarus Verilog (`iverilog`), Verilator cycle-accurate C++ simulation, and native SiliFlow engine.
+- **Native Tauri v2 + Rust Core**: Lightweight installer (**under 10 MB**), fast native cold start, non-blocking Tokio execution threads, configurable compile/simulation watchdog timer (`120s` default, `10–7200s`), and instant abort (<kbd>Shift+F5</kbd>).
+- **100% Local-First IP Privacy**: Every compile, lint pass, `.vcd`/`.fst` parse, netlist elaboration, STA run, CDC/RDC check, Git operation, and register map generation executes directly on your machine—zero cloud uploads.
+- **Monaco Split-Pane HDL Studio**: Dual-pane vertical/horizontal split (<kbd>Ctrl+\\</kbd>), cross-file <kbd>F12</kbd> Go-to-Definition, `350ms` merged diagnostics across **Icarus Verilog**, **Verilator**, and **Slang**, plus inline STA critical-path overlays.
+- **Dual Simulation & Regression Suite**: Run behavioral simulations via **Icarus Verilog** or cycle-accurate C++ runs via **Verilator** with automatic `sv2v` SystemVerilog transpilation, Run History tracking, and automated multi-testbench Regression suites.
+- **Built-In `wellen` Waveform Viewer**: Stream `.vcd` and `.fst` traces up to **100 MB** directly in-app with dual measurement cursors (**`Cursor A` / `Cursor B`**, **`ΔT`** & derived frequency), **HEX / BIN / DEC / OCT** radices, scope trees, and signal cross-probing.
+- **Post-RTL Analysis & Signoff**: Interactive **Yosys + `netlistsvg` Gate Schematic** with `\src` cross-probing, automatic **FSM Visualizer** + Mermaid export, **Static Timing Analysis (`45nm`, `130nm`, `fpga_lut4`, custom `.lib`)**, and **5-rule Structural CDC & RDC Explorer**.
+- **Visual Register Map & Git Graph**: Design **APB / AXI4-Lite / Simple** register maps exporting `.sv`, `.h`, `.rdl`, and `.md`, alongside integrated **Git Diff & Visual Commit Graph**.
 
 ---
 
 ## Architecture Overview
 
-SiliFlow separates concerns into an ergonomic frontend canvas and an isolated, high-performance simulation worker layer:
-
-```
-┌────────────────────────────────────────────────────────┐
-│                  SILIFLOW STUDIO IDE                   │
-├────────────────────────────┬───────────────────────────┤
-│  Monaco RTL Code Editor    │  Embedded Waveform Canvas │
-│  - SystemVerilog 2017 LSP  │  - Multi-gigabyte VCD/FST │
-│  - Instant Linting & AST   │  - Cross-probe to source  │
-└─────────────┬──────────────┴─────────────▲─────────────┘
-              │                            │
-              ▼ (IPC / Direct Memory)      │ (Mapped Trace Buffers)
-┌──────────────────────────────────────────┴─────────────┐
-│             UNIFIED SIMULATION ORCHESTRATOR            │
-│  - Icarus Verilog (Event-Driven Behavioral)            │
-│  - Verilator (Cycle-Accurate High-Throughput C++)      │
-│  - SiliFlow Native Micro-Engine                        │
-└────────────────────────────────────────────────────────┘
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│                        SILIFLOW STUDIO v1.2.0                       │
+├─────────────────────────────────┬───────────────────────────────────┤
+│  Monaco Split HDL Editor        │  Integrated Silicon Visualizers   │
+│  • Verilog-2001 / SV 2017       │  • wellen VCD / FST Waveforms     │
+│  • 350ms Icarus/Verilator/Slang │  • Yosys + netlistsvg Schematics  │
+│  • F12 Index & STA Overlays     │  • FSM Graph & Register Map Studio│
+├──────────────────┬──────────────┴───────────────────▲───────────────┤
+│  Async Rust      │  Tokio IPC & Live Event Streams  │               │
+│  Watchdog Runner ▼  (Filesystem Sandbox + SHA-256)  │               │
+├─────────────────────────────────────────────────────┴───────────────┤
+│                 LOCAL EDA & SIGN-OFF PIPELINE                       │
+│  • Simulation & Transpile: iverilog · vvp · verilator · sv2v        │
+│  • Lint & Style:           slang · verible                          │
+│  • Synthesis & Signoff:    yosys · STA (45nm/130nm/LUT4) · CDC/RDC  │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## System Requirements
 
-| Operating System | Architecture | Minimum RAM | Storage |
+| Operating System | Architecture | Minimum RAM | Installer Footprint |
 | :--- | :--- | :--- | :--- |
-| **Windows** (10 / 11) | x86_64, ARM64 | 4 GB | 150 MB |
-| **macOS** (12 Monterey+) | Apple Silicon (M1/M2/M3/M4), x86_64 | 4 GB | 120 MB |
-| **Linux** (Ubuntu 20.04+, Fedora 38+, Arch) | x86_64, aarch64 | 4 GB | 140 MB |
+| **Windows** (10 / 11) | x86_64 | 4 GB | < 10 MB (`setup.exe` / `.msi`) |
+| **macOS** (12 Monterey+) | Apple Silicon (`aarch64`) / Intel | 4 GB | < 10 MB (`.dmg`) |
+| **Linux** (Ubuntu 20.04+, Fedora, Arch) | x86_64 | 4 GB | < 10 MB (`.AppImage` / `.deb`) |
 
 ---
 
 ## Ready to Start?
 
-Head over to the [Getting Started & Simulation](/docs/getting-started) guide to set up your first workspace and run an F5 simulation in under 60 seconds.
-
+- Install the app and verify toolchains in [Installation & Toolchains](/installation).
+- Load one of the **8 built-in interactive examples** (from *Half Adder* to *RISC-V RV32I* and *Dual-Clock CDC & RDC Lab*) in [Getting Started & Workspaces](/getting-started).
