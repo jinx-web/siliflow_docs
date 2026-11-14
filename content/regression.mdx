@@ -30,3 +30,20 @@ Every compile and simulation run from <kbd>F5</kbd> or the Run sidebar is logged
 - Timestamp and elapsed runtime (`ms`)
 - Preserved stdout/stderr console replay
 - Linked waveform artifact and one-click re-run
+
+---
+
+## 3. Code Coverage, SVA Assertions & Gutter Sync
+
+Open the **Coverage & Assertions** panel (`CoverageAndAssertionsPanel.tsx`, `coverage.rs`) to track verification completeness:
+
+- **Verilator Coverage Merging**: Aggregates **Line**, **Branch**, **Toggle**, and **SystemVerilog Assertion (SVA)** coverage across multiple testbench runs and random seeds.
+- **Editor Gutter Coverage Highlights**: Syncs covered and uncovered RTL lines directly into the Monaco editor gutter (`coverageSync`).
+
+---
+
+## 4. Random-Seed Sweep, Mutation Testing & Protocol Checks
+
+- **Random-Seed Sweep & Worst-Case Finder (`run_seed_sweep`)**: Automatically runs *N* random seeds across constrained-random testbenches, merges coverage, and pinpoints the **worst-case failing seed** for deterministic replay.
+- **RTL Fault-Injection Mutation Testing (`run_mutation_testing`)**: Injects targeted faults into your RTL and measures whether your testbench suite catches them (mutation score).
+- **Protocol & Handshake Verification (`run_protocol_and_equivalence_verification`)**: Checks **`valid`/`ready`** and **`req`/`ack`** handshake stability, backpressure compliance, and deadlock freedom across modules.

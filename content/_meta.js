@@ -23,6 +23,7 @@ export default {
   fsm: 'FSM State Visualizer',
   sta: 'Static Timing Analysis (STA)',
   'cdc-rdc': 'CDC & RDC Verification',
+  'physical-design': 'Physical Flow, DRC & LEC',
   '---workflow': {
     type: 'separator',
     title: 'Workflow & Tools'

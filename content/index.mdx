@@ -1,8 +1,8 @@
 # Welcome to SiliFlow Studio (`v1.2.0`)
 
-**SiliFlow Studio** is a unified, local-first electronic design automation (EDA) desktop workbench built for digital hardware engineers, verification teams, and VLSI students.
+**SiliFlow Studio** is a unified, offline-first electronic design automation (EDA) desktop workbench built for digital hardware engineers, ASIC/FPGA designers, and VLSI students.
 
-Traditional EDA suites force hardware developers across disjointed GUIs, multi-gigabyte installers, brittle FLEXlm license servers, and external waveform popups. SiliFlow brings **RTL editing, split-pane navigation, multi-engine compilation & linting, `.vcd`/`.fst` waveform analysis, Yosys schematic elaboration, FSM visualization, Static Timing Analysis (STA), CDC/RDC signoff, visual register map codegen, Git history, and an integrated multi-shell terminal** together inside one native window.
+Traditional EDA suites force hardware developers across disjointed GUIs, multi-gigabyte installers, brittle FLEXlm license servers, and external waveform popups. SiliFlow brings **RTL editing, split-pane navigation, multi-engine linting, Cocotb/`pyuvm` & coverage-driven simulation, streaming `2+ GB` `.vcd`/`.fst` waveforms, PDK-mapped Yosys schematics, FSM visualization, Static Timing Analysis (OpenSTA bridge + multi-corner PVT), CDC/RDC signoff, Formal LEC, native Rust physical design (2D & 3D), visual register map codegen, Git history, and an integrated multi-shell terminal** together inside one native window.
 
 {/* SCREENSHOT_SLOT: docs-hero-ide.png — Full SiliFlow Studio v1.2.0 main workspace (Explorer + Split Editor + Bottom Panel) */}
 
@@ -10,13 +10,14 @@ Traditional EDA suites force hardware developers across disjointed GUIs, multi-g
 
 ## Key Highlights (`v1.2.0`)
 
-- **Native Tauri v2 + Rust Core**: Lightweight installer (**under 10 MB**), fast native cold start, non-blocking Tokio execution threads, configurable compile/simulation watchdog timer (`120s` default, `10–7200s`), and instant abort (<kbd>Shift+F5</kbd>).
-- **100% Local-First IP Privacy**: Every compile, lint pass, `.vcd`/`.fst` parse, netlist elaboration, STA run, CDC/RDC check, Git operation, and register map generation executes directly on your machine—zero cloud uploads.
-- **Monaco Split-Pane HDL Studio**: Dual-pane vertical/horizontal split (<kbd>Ctrl+\\</kbd>), cross-file <kbd>F12</kbd> Go-to-Definition, `350ms` merged diagnostics across **Icarus Verilog**, **Verilator**, and **Slang**, plus inline STA critical-path overlays.
-- **Dual Simulation & Regression Suite**: Run behavioral simulations via **Icarus Verilog** or cycle-accurate C++ runs via **Verilator** with automatic `sv2v` SystemVerilog transpilation, Run History tracking, and automated multi-testbench Regression suites.
-- **Built-In `wellen` Waveform Viewer**: Stream `.vcd` and `.fst` traces up to **100 MB** directly in-app with dual measurement cursors (**`Cursor A` / `Cursor B`**, **`ΔT`** & derived frequency), **HEX / BIN / DEC / OCT** radices, scope trees, and signal cross-probing.
-- **Post-RTL Analysis & Signoff**: Interactive **Yosys + `netlistsvg` Gate Schematic** with `\src` cross-probing, automatic **FSM Visualizer** + Mermaid export, **Static Timing Analysis (`45nm`, `130nm`, `fpga_lut4`, custom `.lib`)**, and **5-rule Structural CDC & RDC Explorer**.
-- **Visual Register Map & Git Graph**: Design **APB / AXI4-Lite / Simple** register maps exporting `.sv`, `.h`, `.rdl`, and `.md`, alongside integrated **Git Diff & Visual Commit Graph**.
+- **Native Tauri v2 + Rust Core**: Lightweight installer (**under 10 MB**), fast native cold start (**< 0.5s**), low idle footprint (**~65–85 MB**), non-blocking Tokio execution threads, configurable compile/simulation watchdog timer, and instant abort (<kbd>Shift+F5</kbd>).
+- **100% Local-First IP Privacy**: Every compile, lint pass, `.vcd`/`.fst` parse, netlist elaboration, STA run, physical placement/routing pass, Formal LEC check, Git operation, and register map generation executes directly on your machine—zero cloud uploads.
+- **Monaco Split-Pane HDL Studio**: Dual-pane split editor (<kbd>Ctrl+\\</kbd>), cross-file <kbd>F12</kbd> Go-to-Definition, `350ms` merged diagnostics across **Icarus Verilog**, **Verilator**, and **Slang**, **inline Waveform Cursor A signal overlays**, **coverage gutter highlights**, **STA critical-path overlays**, and **Command Palette**.
+- **Simulation, Cocotb/`pyuvm`, Coverage & Mutation Testing**: Run behavioral **Icarus Verilog**, cycle-accurate **Verilator**, or **Cocotb / `pyuvm`** Python testbenches (`sequencer`/`driver`/`monitor`/`scoreboard`); inspect **Line/Branch/Toggle/SVA coverage**, **Random-Seed Sweeps**, **Worst-Case Seed Finder**, **RTL Fault-Injection Mutation Testing**, and **Protocol (`valid/ready`, `req/ack`) & Gate-Level Equivalence checks**.
+- **Streaming `wellen` Waveform Viewer (`500 MB – 2+ GB`)**: Hierarchy-only open with Rust zoom-level LOD decimation and virtualized canvas; **Analog Step Plot**, per-signal formats (`Hex`, `UDec`, `SDec`, `Bin`, `ASCII`, `Analog`), **Dual Cursors (A & B)** + **Reference Clock Cycle Counter**, **Value/Edge Search**, **Named Markers (`M`)**, persistent watchlist, and **Pop-Out OS Window**.
+- **PDK-Mapped Schematics, FSM & Pop-Out Windows**: Interactive **Yosys + `netlistsvg` Gate Schematic** supporting **SkyWater 130nm**, **GF180nm**, **IHP SG13G2 130nm**, **NanGate 45nm**, and custom `.lib`; `Ctrl+F` cell/net search, click-to-lock net tracing, submodule drill-down, SVG/PNG/Netlist JSON export, automatic **FSM Visualizer**, and dedicated **Pop-Out OS Windows**.
+- **STA, CDC/RDC, Formal LEC & Native Rust Physical Flow**: **OpenSTA** bridge with multi-corner PVT & SDC constraints, **5-rule CDC/RDC**, **Yosys SAT Formal LEC**, and native Rust **Floorplan → SimPL Placement → Abacus Legalization → MMM/DME CTS → 3D PathFinder A\* Global Routing → DRC → DEF 5.8** with **2D & Three.js 3D Layout Viewers**.
+- **Signed Auto-Updater**: Automatic Ed25519/minisign-verified desktop updates via `siliflow.in/update.json`.
 
 ---
 
@@ -26,18 +27,18 @@ Traditional EDA suites force hardware developers across disjointed GUIs, multi-g
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        SILIFLOW STUDIO v1.2.0                       │
 ├─────────────────────────────────┬───────────────────────────────────┤
-│  Monaco Split HDL Editor        │  Integrated Silicon Visualizers   │
-│  • Verilog-2001 / SV 2017       │  • wellen VCD / FST Waveforms     │
-│  • 350ms Icarus/Verilator/Slang │  • Yosys + netlistsvg Schematics  │
-│  • F12 Index & STA Overlays     │  • FSM Graph & Register Map Studio│
+│  Monaco Split HDL Editor        │  Silicon & Physical Visualizers   │
+│  • Verilog-2001 / SV 2017       │  • Streaming 2+ GB VCD/FST Waves  │
+│  • Icarus / Verilator / Slang   │  • PDK Schematics & FSM Pop-Outs  │
+│  • Cursor A, Coverage & STA HUD │  • 2D & Three.js 3D Physical View │
 ├──────────────────┬──────────────┴───────────────────▲───────────────┤
 │  Async Rust      │  Tokio IPC & Live Event Streams  │               │
-│  Watchdog Runner ▼  (Filesystem Sandbox + SHA-256)  │               │
+│  Watchdog Runner ▼  (Path Guardrails + Signed Upd.) │               │
 ├─────────────────────────────────────────────────────┴───────────────┤
-│                 LOCAL EDA & SIGN-OFF PIPELINE                       │
-│  • Simulation & Transpile: iverilog · vvp · verilator · sv2v        │
-│  • Lint & Style:           slang · verible                          │
-│  • Synthesis & Signoff:    yosys · STA (45nm/130nm/LUT4) · CDC/RDC  │
+│             LOCAL EDA, VERIFICATION & PHYSICAL PIPELINE             │
+│  • Sim & Verif:    iverilog · verilator · sv2v · cocotb / pyuvm     │
+│  • Synth & Formal: yosys (prep/abc/dfflibmap/sat) · slang · verible │
+│  • Physical & STA: Native Rust (SimPL/Abacus/CTS/Router) · OpenSTA  │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -56,4 +57,5 @@ Traditional EDA suites force hardware developers across disjointed GUIs, multi-g
 ## Ready to Start?
 
 - Install the app and verify toolchains in [Installation & Toolchains](/installation).
-- Load one of the **8 built-in interactive examples** (from *Half Adder* to *RISC-V RV32I* and *Dual-Clock CDC & RDC Lab*) in [Getting Started & Workspaces](/getting-started).
+- Load one of the **built-in interactive examples** in [Getting Started & Workspaces](/getting-started).
+- Explore the new [Native Physical Flow, DRC & Formal LEC](/physical-design) guide.

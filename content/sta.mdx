@@ -19,10 +19,15 @@ Choose your target cell timing model directly inside the STA bar (or set `flow.t
 
 | Library Preset / Option | Use Case |
 | :--- | :--- |
-| **`45nm`** | Standard-cell ASIC estimation (Nangate / FreePDK45 scale) |
-| **`130nm`** | Open-PDK ASIC timing estimation (SkyWater 130nm scale) |
+| **`45nm`** | Standard-cell ASIC estimation (NanGate 45nm / FreePDK45 scale) |
+| **`130nm`** | Open-PDK ASIC timing estimation (**SkyWater 130nm** `sky130_fd_sc_hd` & **IHP SG13G2**) |
+| **`180nm`** | **GlobalFoundries 180nm** (`gf180mcu_fd_sc_mcu7t5v0`) open-PDK estimation |
 | **`fpga_lut4`** | 4-input LUT FPGA fabric estimation |
 | **Custom `.lib`** | Point SiliFlow to your own Liberty timing library file on disk |
+
+### OpenSTA Bridge, Multi-Corner PVT & SDC Constraints
+
+SiliFlow's STA engine (`sta_engine.rs`) also supports an **OpenSTA bridge**, **SDC timing constraints**, **multi-corner PVT** analysis, and **run-to-run timing diff** so you can compare slack changes across RTL edits or physical placement/CTS stages. For formal RTL-vs-netlist verification, see [Physical Flow, DRC & Formal LEC](/physical-design).
 
 ---
 

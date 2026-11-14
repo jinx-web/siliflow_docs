@@ -36,3 +36,13 @@ Under the hood, SiliFlow's Rust runner orchestrates four stages on asynchronous 
 2. **Automatic `sv2v` Transpilation**: If a design uses SystemVerilog features (`logic`, `always_ff`, enums, interfaces) while running Icarus Verilog, `sv2v` preprocesses cleanly in an isolated temp pass.
 3. **Configurable Watchdog Timer**: Enforces a configurable timeout (**120 seconds default**, tunable from **10 to 7200 seconds** in Settings) so accidental infinite loops (like `always #0 clk = ~clk;`) never freeze your workstation.
 4. **Live Log Streaming & Auto-Load**: Compiler/runtime stdout streams directly into the **Output** panel, diagnostics route to **Problems**, and generated `.vcd` / `.fst` traces load cleanly into the built-in Waveform viewer.
+
+---
+
+## 4. Cocotb & `pyuvm` Python Verification
+
+SiliFlow supports Python-based hardware verification alongside traditional Verilog/SystemVerilog testbenches (`cocotb.rs`):
+
+- **Cocotb Runner & XML/Traceback Parser**: Execute `cocotb` testsuites directly from the IDE with structured pass/fail reporting, `plusargs` forwarding, and click-to-jump Python/RTL tracebacks.
+- **`pyuvm` Verification Templates**: Scaffold UVM-style **`sequencer`**, **`driver`**, **`monitor`**, and **`scoreboard`** components in Python for constrained-random and transaction-level verification.
+- **RTL vs. Gate-Level Timing Mismatch**: Compare behavioral RTL simulation results against post-synthesis gate-level simulations to catch X-propagation or timing mismatches early.

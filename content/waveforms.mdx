@@ -1,35 +1,50 @@
-# Interactive Waveform Viewer
+# Interactive Waveform Viewer (500 MB – 2+ GB)
 
-SiliFlow embeds a native waveform viewer directly in the bottom panel or editor tab strip—eliminating context-switching to external windows for day-to-day verification.
+SiliFlow embeds a high-performance streaming waveform viewer directly in the bottom panel, split editor pane, or its own **dedicated Pop-Out OS Window**—capable of smoothly inspecting massive **500 MB to 2+ GB** `.vcd` and `.fst` simulation traces.
 
 {/* SCREENSHOT_SLOT: docs-waveform-viewer.png — Embedded Waveform Viewer with signal tree, bus transitions, Cursor A/B delta, and radix selector */}
 
 ---
 
-## 1. Supported Formats & Rust `wellen` Parser
+## 1. Streaming `wellen` Architecture (Large-File Support)
 
-- Powered by the native Rust **`wellen`** parser (`commands/waveform.rs`), supporting both **VCD** (`.vcd`) and **FST** (`.fst`) waveform traces up to **100 MB** (with automatic fallback line-parser recovery for malformed VCD headers).
-- Hold `Alt` while clicking **Waveform** in the Action Island (`Alt+Click`) to open waveforms directly in the secondary split pane beside your RTL code.
+Powered by the native Rust **`wellen`** session engine (`commands/waveform.rs`), SiliFlow avoids loading entire gigabyte traces into RAM:
 
----
-
-## 2. Key Capabilities
-
-- **1-Bit & Multi-Bit Bus Rendering**: Clear digital transitions for scalar nets and packed vectors, with red **`X`** unknown-state hazard highlighting and amber **`Z`** high-impedance highlighting.
-- **Radix Switching (`HEX` / `BIN` / `DEC` / `OCT`)**: Switch global bus representation cleanly across Hexadecimal, Binary, Decimal, and Octal.
-- **Dual Measurement Cursors (`Cursor A` & `Cursor B`)**:
-  - Place and inspect independent primary/secondary time markers (`Cursor A`, `Cursor B`).
-  - View exact timestamps, **`ΔT` delta**, and derived **frequency (`Hz` / `kHz` / `MHz` / `GHz`)**, alongside live hover cursor time tracking.
-- **Collapsible Scope Tree & Signal Filter**: Resizable signal sidebar (`70–450px`, saved across sessions), expandable DUT hierarchy scopes, scope dropdown filter, and substring/regex signal filter.
-- **Go to Signal Definition & GTKWave Handoff**: Jump straight from a waveform signal to its RTL declaration via `VerilogWorkspaceIndex`, copy signal names/paths/values, or open huge external runs directly in **GTKWave** from the Run menu (`Run → Open in External GTKWave`).
+- **Hierarchy-Only Open (`open_waveform_session`)**: Opens `.vcd` and `.fst` files by reading only the signal hierarchy upfront (with legacy VCD fallback recovery for malformed headers).
+- **On-Demand Visible Signal Loading (`query_waveform_signals`)**: Fetches transitions only for signals currently visible in the viewport or pinned by the user.
+- **Zoom-Level Decimation (LOD)**: Downsamples dense transition regions into pixel-width buckets inside Rust when zoomed out, and streams exact transitions as you zoom in.
+- **Vertical Canvas Virtualization**: Uses a sticky viewport-sized `<canvas>` so thousands of signals render smoothly at 60 FPS without hitting WebView canvas height limits.
+- **Pop-Out Window & Split Docking**: Hold `Alt` while clicking **Waveform** (`Alt+Click`) to dock in a split pane, or launch a standalone **Pop-Out OS Window** (`open_waveform_window`) on a second monitor.
 
 ---
 
-## 3. Navigation Controls
+## 2. Visualization, Radices & Analog Step Plot
 
-| Interaction | Action |
+- **High-DPI 1-Bit & Multi-Bit Rendering**: Crisp `0` / `1` / red `X` (unknown) / amber `Z` (high-impedance) transitions and packed multi-bit bus diamonds.
+- **Analog Step Plot Mode**: Render multi-bit buses as continuous step-plot analog waveforms for DSP, ADC/DAC, and filter verification.
+- **Per-Signal Display Format Overrides**: Override individual signals with **`Hex`**, **`UDec`** (unsigned decimal), **`SDec`** (two's-complement signed decimal via `BigInt`), **`Bin`**, **`ASCII`**, or **`Analog`**, alongside the global `HEX` / `BIN` / `DEC` switcher.
+- **Inline RTL Cursor A Signal Overlays**: Live signal values at **Cursor A** are projected directly inline inside the Monaco RTL editor beside matching signal names.
+
+---
+
+## 3. Cursors, Cycle Counter, Search & Watchlists
+
+- **Dual Measurement Cursors (`Cursor A` & `Cursor B`)**: Measure exact timestamps, **`Δt` delta**, and derived **frequency (`zs` through `s` timescales)**, plus a **Reference Clock Cycle Counter** (`count_clock_cycles`) between cursors.
+- **Value & Edge Search (`search_waveform_value`)**: Jump across large traces to exact hex (`0x...`), binary (`0b...`), or decimal bus values, as well as `posedge`, `negedge`, and `edge` events.
+- **Named Markers (<kbd>M</kbd>)**: Drop and label persistent timeline markers.
+- **Pin & Reorder Watchlists**: Pin key signals to the top, reorder signals up/down, and persist watchlists per waveform in `localStorage`.
+- **Cross-Probing & External GTKWave**: Double-click or right-click **Jump to Driver in Source (<kbd>F12</kbd>)**, or launch **GTKWave** directly (`open_gtkwave`, including macOS `.app` support).
+
+---
+
+## 4. Keyboard & Navigation Controls
+
+| Interaction / Shortcut | Action |
 | :--- | :--- |
 | **Mouse Wheel** | Smooth zoom centered around cursor timestamp |
 | **Click + Drag on Canvas** | Pan timeline horizontally |
-| **Zoom In / Out / Fit All** | Toolbar zoom buttons to inspect clock cycles or fit full trace |
-| **Cursor A / B Placement** | Click timeline ruler to inspect edges and measure `ΔT` / frequency |
+| <kbd>+</kbd> / <kbd>=</kbd> and <kbd>-</kbd> | Zoom in / Zoom out |
+| <kbd>F</kbd> | Fit entire simulation timeline to view |
+| <kbd>←</kbd> / <kbd>→</kbd> | Step **Cursor A** to previous / next signal edge |
+| <kbd>M</kbd> | Toggle named timeline marker at Cursor A |
+| **Double-Click Signal** | Jump to signal driver in RTL source (<kbd>F12</kbd>) |

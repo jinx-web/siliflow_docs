@@ -1,0 +1,47 @@
+# Native Physical Flow, DRC & Formal LEC
+
+SiliFlow Studio `v1.2.0` includes a **native Rust RTL-to-Layout physical implementation engine** alongside **Yosys SAT Formal Logical Equivalence Checking (LEC)**—allowing you to explore floorplanning, placement, clock tree synthesis, 3D routing, DRC, and formal equivalence locally on your machine.
+
+---
+
+## 1. Native Rust Physical Design Pipeline
+
+SiliFlow executes physical implementation in pure Rust (`physical_flow.rs`) without external cloud dependencies:
+
+| Stage | Engine / Algorithm | Details |
+| :--- | :--- | :--- |
+| **1. Floorplanning** | Native Die & Core Ring Builder | Defines die area, core utilization, macro halos, and perimeter I/O pin placement |
+| **2. Global Placement** | **SimPL** Quadratic Placer (`global_placer.rs`) | Analytical wirelength-driven cell spreading across the core die |
+| **3. Legalization** | **Abacus** Legalizer (`abacus.rs`) | Snaps standard cells into legal site rows with minimal displacement |
+| **4. Clock Tree Synthesis** | **MMM / DME** Zero-Skew CTS (`cts.rs`) | Builds balanced zero-skew clock distribution trees with buffer insertion |
+| **5. Global Routing** | **3D PathFinder A\*** Router (`global_router.rs`) | Multi-layer metal routing (`li1`, `met1`–`met5`) with congestion negotiation |
+| **6. Timing & DRC** | Stage-by-Stage STA + Native DRC (`drc.rs`) | Evaluates post-placement/routing timing and checks physical design rules |
+| **7. Layout Export** | **DEF 5.8** | Exports industry-standard Design Exchange Format (`.def`) files |
+
+---
+
+## 2. Embedded Open-PDK & Liberty Support
+
+Physical synthesis, timing, and layout map directly against embedded open-source PDKs (`pdk_liberty.rs`) or custom `.lib` files:
+
+- **SkyWater 130nm** (`sky130_fd_sc_hd`)
+- **GlobalFoundries 180nm** (`gf180mcu_fd_sc_mcu7t5v0`)
+- **IHP SG13G2 130nm** (`sg13g2_stdcell`)
+- **NanGate 45nm**
+- **Custom `.lib`**: Load your own standard-cell Liberty timing library
+
+---
+
+## 3. Interactive 2D & 3D Silicon Layout Viewers
+
+- **2D Interactive Silicon Canvas (`PhysicalLayoutViewer.tsx`)**: Inspect placed standard-cell rows, macro halos, clock trees, and routed metal layers with smooth pan/zoom and net highlighting.
+- **3D WebGL Layout Viewer (`PhysicalLayout3DViewer.tsx`)**: Extrudes standard cells, `li1`, `met1`–`met5`, and vias into an interactive 3D stackup with layer visibility toggles and Z-axis inspection.
+
+---
+
+## 4. Formal Logical Equivalence Checking (LEC)
+
+Verify that your synthesized gate-level netlist is mathematically equivalent to your golden RTL using **Yosys SAT miter** equivalence checking (`lec.rs`):
+
+- Compares RTL against synthesized netlist or reference models.
+- Reports proven equivalence (`EQUIVALENT`) or generates counterexample input vectors when a mismatch is detected.
